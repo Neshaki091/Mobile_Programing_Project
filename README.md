@@ -1,15 +1,16 @@
-# Ứng dụng Fitness & Nutrition
+# fitness_nutritions_projects
 
-## Giới Thiệu
-Ứng dụng giúp người dùng tham khảo những bài tập và 
-dưỡng chất trong thực phẩm để cải thiện sức khỏe và thể chất.
-## 🛠 Công Nghệ Sử Dụng
-.....
-## Thiết Kế Giao Diện
-Xem bản thiết kế giao diện trên Figma tại đây:  
-[🔗Ứng dụng Fitness & Nutrition ](https://www.figma.com/design/rprUOl1fFDJLEnxiSo0mbG/Fitness-%26-Nutrition?node-id=0-1&t=hrwSRJe2Zi2gRpQj-1)
+A new Flutter project.
 
-## Thành Viên Nhóm  
-- **Huỳnh Công Luyện** - [GitHub](https://github.com/Neshaki091)  
-- **Trần Võ Quang Huy** - [GitHub](https://github.com/tvqhuy246)  
-- **Nguyễn Đình Mạnh** - [GitHub](https://github.com/manhnguyenit182) 
+## Getting Started
+
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
