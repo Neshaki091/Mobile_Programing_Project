@@ -1,0 +1,39 @@
+com.example.project.app-jetified-lifecycle-viewmodel-savedstate-2.7.0-0 C:\Users\huynh\.gradle\caches\8.9\transforms\040cfe7053085ba687a737da260dabf9\transformed\jetified-lifecycle-viewmodel-savedstate-2.7.0\res
+com.example.project.app-jetified-tracing-1.2.0-1 C:\Users\huynh\.gradle\caches\8.9\transforms\0d056f7621bd912599f9083731f9ba8e\transformed\jetified-tracing-1.2.0\res
+com.example.project.app-jetified-credentials-1.2.0-rc01-2 C:\Users\huynh\.gradle\caches\8.9\transforms\0d3903802b2195430065fbdbf534054c\transformed\jetified-credentials-1.2.0-rc01\res
+com.example.project.app-jetified-window-1.2.0-3 C:\Users\huynh\.gradle\caches\8.9\transforms\133025abd94b459e00125141e3e2274d\transformed\jetified-window-1.2.0\res
+com.example.project.app-lifecycle-runtime-2.7.0-4 C:\Users\huynh\.gradle\caches\8.9\transforms\4307b3b505279c64aea39ba6948c8dcd\transformed\lifecycle-runtime-2.7.0\res
+com.example.project.app-jetified-core-1.0.0-5 C:\Users\huynh\.gradle\caches\8.9\transforms\5bf402ff0a548d3b8785e49fb816bca6\transformed\jetified-core-1.0.0\res
+com.example.project.app-jetified-core-ktx-1.13.1-6 C:\Users\huynh\.gradle\caches\8.9\transforms\62fa9b0d19cf9d0abd2c7d9da57a0c8f\transformed\jetified-core-ktx-1.13.1\res
+com.example.project.app-jetified-profileinstaller-1.3.1-7 C:\Users\huynh\.gradle\caches\8.9\transforms\697f990066564125c0b67894335a2575\transformed\jetified-profileinstaller-1.3.1\res
+com.example.project.app-jetified-play-services-basement-18.4.0-8 C:\Users\huynh\.gradle\caches\8.9\transforms\8419931d31e3b4d92a51a55487406872\transformed\jetified-play-services-basement-18.4.0\res
+com.example.project.app-jetified-window-java-1.2.0-9 C:\Users\huynh\.gradle\caches\8.9\transforms\8f4d93486bc94fbf6420abc1c2fa17a5\transformed\jetified-window-java-1.2.0\res
+com.example.project.app-lifecycle-livedata-core-2.7.0-10 C:\Users\huynh\.gradle\caches\8.9\transforms\9066cc8c11c5624c9a19f5cb0685236c\transformed\lifecycle-livedata-core-2.7.0\res
+com.example.project.app-jetified-play-services-base-18.1.0-11 C:\Users\huynh\.gradle\caches\8.9\transforms\9358c9e621c5399584b43830a99537b6\transformed\jetified-play-services-base-18.1.0\res
+com.example.project.app-jetified-annotation-experimental-1.4.0-12 C:\Users\huynh\.gradle\caches\8.9\transforms\951bb2ce87acd4c0f68aa50b118ae3b5\transformed\jetified-annotation-experimental-1.4.0\res
+com.example.project.app-jetified-startup-runtime-1.1.1-13 C:\Users\huynh\.gradle\caches\8.9\transforms\9a79f966fe5177fdb83a7ca31daeb0a4\transformed\jetified-startup-runtime-1.1.1\res
+com.example.project.app-jetified-play-services-auth-21.0.0-14 C:\Users\huynh\.gradle\caches\8.9\transforms\a38cd519e03da2ec3876e499ca4d197c\transformed\jetified-play-services-auth-21.0.0\res
+com.example.project.app-jetified-firebase-messaging-24.1.0-15 C:\Users\huynh\.gradle\caches\8.9\transforms\b9c8373a4fd7bfeedf3542c17d9e7dd1\transformed\jetified-firebase-messaging-24.1.0\res
+com.example.project.app-jetified-core-common-2.0.3-16 C:\Users\huynh\.gradle\caches\8.9\transforms\baae9f5d646d1b6a3c370b4d6c8665ec\transformed\jetified-core-common-2.0.3\res
+com.example.project.app-core-1.13.1-17 C:\Users\huynh\.gradle\caches\8.9\transforms\bad7addca9768ed004005baa85d7a475\transformed\core-1.13.1\res
+com.example.project.app-jetified-firebase-common-21.0.0-18 C:\Users\huynh\.gradle\caches\8.9\transforms\beff006f3756736ee7a651932a68c8ad\transformed\jetified-firebase-common-21.0.0\res
+com.example.project.app-browser-1.4.0-19 C:\Users\huynh\.gradle\caches\8.9\transforms\c58690d56a2c89cdab082a9d7b022e54\transformed\browser-1.4.0\res
+com.example.project.app-jetified-lifecycle-process-2.7.0-20 C:\Users\huynh\.gradle\caches\8.9\transforms\ccbfd3ecb3a06fbafcc9cfc353d641f8\transformed\jetified-lifecycle-process-2.7.0\res
+com.example.project.app-jetified-activity-1.8.1-21 C:\Users\huynh\.gradle\caches\8.9\transforms\d0fa1ef1c178d5c9cbd2e7bc9afb1cd8\transformed\jetified-activity-1.8.1\res
+com.example.project.app-jetified-savedstate-1.2.1-22 C:\Users\huynh\.gradle\caches\8.9\transforms\d3b743c69ada356329c6e7c1859916ca\transformed\jetified-savedstate-1.2.1\res
+com.example.project.app-lifecycle-viewmodel-2.7.0-23 C:\Users\huynh\.gradle\caches\8.9\transforms\dea749daf27aa912e9cb11c66d96cd63\transformed\lifecycle-viewmodel-2.7.0\res
+com.example.project.app-jetified-credentials-play-services-auth-1.2.0-rc01-24 C:\Users\huynh\.gradle\caches\8.9\transforms\dfe11339c6c8d4780118e7aaccd74722\transformed\jetified-credentials-play-services-auth-1.2.0-rc01\res
+com.example.project.app-core-runtime-2.2.0-25 C:\Users\huynh\.gradle\caches\8.9\transforms\e782b26ea181c65ac4b571e17e871b40\transformed\core-runtime-2.2.0\res
+com.example.project.app-fragment-1.7.1-26 C:\Users\huynh\.gradle\caches\8.9\transforms\ef2021337814b0b94b8e2c4897bf694e\transformed\fragment-1.7.1\res
+com.example.project.app-debug-27 D:\HTML dev\DA_LTW\Mobile-Programing\project\android\app\src\debug\res
+com.example.project.app-main-28 D:\HTML dev\DA_LTW\Mobile-Programing\project\android\app\src\main\res
+com.example.project.app-pngs-29 D:\HTML dev\DA_LTW\Mobile-Programing\project\build\app\generated\res\pngs\debug
+com.example.project.app-res-30 D:\HTML dev\DA_LTW\Mobile-Programing\project\build\app\generated\res\processDebugGoogleServices
+com.example.project.app-resValues-31 D:\HTML dev\DA_LTW\Mobile-Programing\project\build\app\generated\res\resValues\debug
+com.example.project.app-packageDebugResources-32 D:\HTML dev\DA_LTW\Mobile-Programing\project\build\app\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.example.project.app-packageDebugResources-33 D:\HTML dev\DA_LTW\Mobile-Programing\project\build\app\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.example.project.app-debug-34 D:\HTML dev\DA_LTW\Mobile-Programing\project\build\app\intermediates\merged_res\debug\mergeDebugResources
+com.example.project.app-debug-35 D:\HTML dev\DA_LTW\Mobile-Programing\project\build\cloud_firestore\intermediates\packaged_res\debug\packageDebugResources
+com.example.project.app-debug-36 D:\HTML dev\DA_LTW\Mobile-Programing\project\build\firebase_auth\intermediates\packaged_res\debug\packageDebugResources
+com.example.project.app-debug-37 D:\HTML dev\DA_LTW\Mobile-Programing\project\build\firebase_core\intermediates\packaged_res\debug\packageDebugResources
+com.example.project.app-debug-38 D:\HTML dev\DA_LTW\Mobile-Programing\project\build\google_sign_in_android\intermediates\packaged_res\debug\packageDebugResources

@@ -1,0 +1,2 @@
+D:/HTML dev/DA_LTW/Mobile-Programing/project/android/app/.cxx/Debug/6n263y38/x86_64/CMakeFiles/edit_cache.dir
+D:/HTML dev/DA_LTW/Mobile-Programing/project/android/app/.cxx/Debug/6n263y38/x86_64/CMakeFiles/rebuild_cache.dir
