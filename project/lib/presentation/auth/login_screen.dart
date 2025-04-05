@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
+import '../../providers/authentic_provider.dart';
 import 'signup_screen.dart';
 import '../home/home_screen.dart';
 
@@ -16,21 +16,32 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _login(BuildContext context) async {
     setState(() => _isLoading = true);
-    bool success = await Provider.of<AuthProvider>(
+
+    bool success = await Provider.of<AuthenticProvider>(
       context,
       listen: false,
     ).login(_emailController.text, _passwordController.text);
+
     setState(() => _isLoading = false);
 
     if (success) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
+      final user =
+          Provider.of<AuthenticProvider>(context, listen: false).user;
+      if (user != null) {
+        // Chuyển đến HomeScreen sau khi đăng nhập thành công
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Không lấy được thông tin người dùng!")),
+        );
+      }
     } else {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Đăng nhập thất bại!")));
+      ).showSnackBar(SnackBar(content: Text("Đăng nhập không thành công!")));
     }
   }
 
@@ -40,7 +51,6 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
         child: SingleChildScrollView(
-          // Thêm ScrollView để tránh tràn màn hình
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -91,7 +101,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ? CircularProgressIndicator()
                   : InkWell(
                     onTap: () => _login(context),
-
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.blue,
@@ -101,7 +110,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         horizontal: 117,
                         vertical: 12,
                       ),
-
                       child: Text(
                         "Đăng nhập",
                         style: TextStyle(
@@ -141,7 +149,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-
               IconButton(
                 icon: ClipOval(
                   child: Image.asset(
@@ -152,19 +159,33 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 onPressed: () async {
                   bool success =
-                      await Provider.of<AuthProvider>(
+                      await Provider.of<AuthenticProvider>(
                         context,
                         listen: false,
                       ).loginWithGoogle();
+
+                  setState(() => _isLoading = false);
+
                   if (success) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Đăng nhập Google thất bại!")),
-                    );
+                    final user =
+                        Provider.of<AuthenticProvider>(
+                          context,
+                          listen: false,
+                        ).user;
+                    if (user != null) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "Không lấy được thông tin người dùng từ Google!",
+                          ),
+                        ),
+                      );
+                    }
                   }
                 },
               ),

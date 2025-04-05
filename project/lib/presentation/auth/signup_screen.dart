@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:project/presentation/auth/login_screen.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
+import '../../providers/authentic_provider.dart'; // Adjust the import if necessary
+import 'login_screen.dart';
 import '../home/home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -14,7 +14,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _reEnterPassController = TextEditingController();
   bool _isLoading = false;
-  bool _isAccepst = false;
+  bool _isAccept = false;
 
   @override
   void initState() {
@@ -24,12 +24,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _signUp(BuildContext context) async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final rePassword = _reEnterPassController.text.trim();
+
+    if (!_isAccept) {
+      _showErrorDialog("Bạn cần chấp nhận điều khoản trước khi tiếp tục.");
+      return;
+    }
+
+    if (email.isEmpty || password.isEmpty || rePassword.isEmpty) {
+      _showErrorDialog("Vui lòng điền đầy đủ thông tin.");
+      return;
+    }
+
+    if (password != rePassword) {
+      _showErrorDialog("Mật khẩu không khớp.");
+      return;
+    }
+
     setState(() => _isLoading = true);
     try {
-      bool success = await Provider.of<AuthProvider>(
-        context,
-        listen: false,
-      ).register(_emailController.text.trim(), _passwordController.text.trim());
+      bool success = await Provider.of<AuthenticProvider>(context, listen: false)
+          .register(email, password);
 
       setState(() => _isLoading = false);
 
@@ -50,25 +67,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text("Lỗi"),
-            content: Text(message),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text("OK"),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: Text("Lỗi"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("OK"),
           ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    bool passwordsMatch =
-        _passwordController.text == _reEnterPassController.text;
-
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
@@ -88,134 +101,66 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 10),
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-
-                keyboardType: TextInputType.emailAddress,
+              _buildTextField(
+                _emailController,
+                "Email",
+                false,
+                TextInputType.emailAddress,
               ),
               SizedBox(height: 10),
-              TextField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: "Mật khẩu",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                obscureText: true,
+              _buildTextField(_passwordController, "Mật khẩu", true),
+              SizedBox(height: 10),
+              _buildTextField(
+                _reEnterPassController,
+                "Nhập lại mật khẩu",
+                true,
               ),
-              SizedBox(height: 10),
-              TextField(
-                controller: _reEnterPassController,
-                decoration: InputDecoration(
-                  labelText: "Nhập lại mật khẩu",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                obscureText: true,
-              ),
-              SizedBox(height: 10),
-
-              SizedBox(height: 10),
-              _isLoading
-                  ? CircularProgressIndicator()
-                  : InkWell(
-                    onTap: () {
-                      if (!_isAccepst) {
-                        _showErrorDialog(
-                          "Bạn cần chấp nhận điều khoản trước khi tiếp tục.",
-                        );
-                        return;
-                      }
-
-                      if (passwordsMatch && _emailController.text.isNotEmpty) {
-                        _signUp(context);
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 128,
-                        vertical: 12,
-                      ),
-                      child: Text(
-                        "Đăng ký",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-              SizedBox(height: 10),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0),
-                child: Row(
-                  children: [
-                    Checkbox(
-                      value: _isAccepst,
-                      onChanged: (bool? newValue) {
-                        setState(() {
-                          _isAccepst = newValue!;
-                        });
-                      },
-                    ),
-                    // Để văn bản tự động xuống dòng nếu quá dài
-                    Expanded(
-                      child: Text(
-                        "Đồng ý với Điều khoản Dịch vụ và Chính sách Quyền riêng tư của Fitness & Nutrition.",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               SizedBox(height: 10),
               Row(
                 children: [
-                  SizedBox(
-                    height: 1,
-                    width: 100,
-                    child: Container(
-                      width: 50, // Độ dài gạch ngang
-                      height: 4, // Độ dày gạch
-                      color: Colors.black, // Màu sắc
-                    ),
+                  Checkbox(
+                    value: _isAccept,
+                    onChanged: (bool? newValue) {
+                      setState(() {
+                        _isAccept = newValue!;
+                      });
+                    },
                   ),
-                  SizedBox(width: 10),
-                  Text(
-                    "Hoặc đăng nhập với",
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                  SizedBox(width: 10),
-                  SizedBox(
-                    height: 1,
-                    width: 100,
-                    child: Container(
-                      width: 50, // Độ dài gạch ngang
-                      height: 4, // Độ dày gạch
-                      color: Colors.black, // Màu sắc
+                  Expanded(
+                    child: Text(
+                      "Đồng ý với Điều khoản Dịch vụ và Chính sách Quyền riêng tư của Fitness & Nutrition.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ),
                 ],
               ),
-
+              SizedBox(height: 10),
+              _isLoading
+                  ? CircularProgressIndicator()
+                  : InkWell(
+                      onTap: () => _signUp(context),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 128,
+                          vertical: 12,
+                        ),
+                        child: Text(
+                          "Đăng ký",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+              SizedBox(height: 20),
+              _buildOrDivider(),
               IconButton(
                 icon: ClipOval(
                   child: Image.asset(
@@ -226,61 +171,101 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 onPressed: () async {
                   try {
-                    bool success =
-                        await Provider.of<AuthProvider>(
-                          context,
-                          listen: false,
-                        ).loginWithGoogle();
+                    bool success = await Provider.of<AuthenticProvider>(
+                      context,
+                      listen: false,
+                    ).loginWithGoogle();
+
                     if (success) {
-                      Navigator.pushReplacement(
+                      final user = Provider.of<AuthenticProvider>(
                         context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
-                      );
-                    } else {
-                      _showErrorDialog("Đăng nhập Google thất bại!");
+                        listen: false,
+                      ).user;
+                      if (user != null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeScreen(),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "Không lấy được thông tin người dùng từ Google!",
+                            ),
+                          ),
+                        );
+                      }
                     }
                   } catch (e) {
                     _showErrorDialog("Lỗi hệ thống: ${e.toString()}");
                   }
                 },
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 100),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Column(
-                    children: [
-                      Text(
-                        "Bạn đã có tài khoản, đăng nhập",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginScreen(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          "Đăng Nhập",
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.grey,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
+              SizedBox(height: 80),
+              Column(
+                children: [
+                  Text(
+                    "Bạn đã có tài khoản, đăng nhập",
+                    style: TextStyle(color: Colors.grey),
                   ),
-                ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                      );
+                    },
+                    child: Text(
+                      "Đăng Nhập",
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.grey,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label,
+    bool isObscure, [
+    TextInputType type = TextInputType.text,
+  ]) {
+    return TextField(
+      controller: controller,
+      obscureText: isObscure,
+      keyboardType: type,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
+  }
+
+  Widget _buildOrDivider() {
+    return Row(
+      children: [
+        Expanded(child: Container(height: 1, color: Colors.black)),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            "Hoặc đăng nhập với",
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+        ),
+        Expanded(child: Container(height: 1, color: Colors.black)),
+      ],
     );
   }
 }

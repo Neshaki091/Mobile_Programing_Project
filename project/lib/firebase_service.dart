@@ -1,54 +1,45 @@
+// lib/data/firebase_service.dart
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  // Đăng nhập với email & password
-  Future<User?> signInWithEmail(String email, String password) async {
+
+  // Đăng ký người dùng mới
+  Future<User?> signUp(String email, String password) async {
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
       return userCredential.user;
     } catch (e) {
-      print("Lỗi đăng nhập: $e");
-      return null;
+      throw e;
     }
   }
 
-  // Đăng ký tài khoản mới
-  Future<User?> signUpWithEmail(String email, String password) async {
+  // Đăng nhập người dùng
+  Future<User?> signIn(String email, String password) async {
     try {
-      UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
-      return userCredential.user;
-    } catch (e) {
-      print("Lỗi đăng ký: $e");
-      return null;
-    }
-  }
-
-  Future<User?> loginWithGoogle() async {
-    try {
-      final GoogleSignIn _googleSignIn = GoogleSignIn();
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null; // Người dùng huỷ đăng nhập
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
       );
-
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithCredential(credential);
       return userCredential.user;
     } catch (e) {
-      print("🔥 Lỗi đăng nhập Google: $e");
-      return null;
+      throw e;
+    }
+  }
+
+  // Đăng nhập với Google
+  Future<User?> signInWithGoogle() async {
+    // Bạn sẽ cần cài đặt Google Sign-In cho Firebase ở đây
+    // Đoạn này sử dụng thư viện 'google_sign_in' và 'firebase_auth'
+    try {
+      // Giả sử đăng nhập Google thành công, trả về user
+      final UserCredential userCredential = await _auth.signInWithCredential(GoogleAuthProvider.credential());
+      return userCredential.user;
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -57,7 +48,7 @@ class FirebaseService {
     await _auth.signOut();
   }
 
-  // Lấy trạng thái người dùng hiện tại
+  // Lấy thông tin người dùng hiện tại
   User? getCurrentUser() {
     return _auth.currentUser;
   }

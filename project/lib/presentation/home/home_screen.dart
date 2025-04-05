@@ -1,46 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../../providers/auth_provider.dart' as local_auth;
-import '../auth/login_screen.dart';
+import '../../providers/authentic_provider.dart';
+import '../../routes/app_routes.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  Future<void> _handleLogout(
+    BuildContext context,
+    AuthenticProvider authProvider, // Sửa lại đây
+  ) async {
+    await authProvider.logout();
+
+    // Xóa toàn bộ route stack và quay về màn hình đăng nhập
+    Navigator.of(
+      context,
+    ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<local_auth.AuthProvider>(context);
-    final User? user = authProvider.user; // Lấy user từ provider
+    final authProvider = Provider.of<AuthenticProvider>(context); // Sửa lại đây
+    final user = authProvider.user;
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Row(
-          mainAxisAlignment:
-              MainAxisAlignment.spaceBetween, // ✅ Tự động căn đều
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
-              icon: Icon(Icons.people_outline, color: Colors.blue),
-              onPressed: () async {
-                await authProvider.logout();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
-              },
+              icon: const Icon(Icons.people_outline, color: Colors.blue),
+              onPressed: () => _handleLogout(context, authProvider),
             ),
             Image.asset("assets/images/logo_image.png", width: 60, height: 40),
             PopupMenuButton<String>(
-              icon: Icon(Icons.list),
-              onSelected: (value) async {
+              icon: const Icon(Icons.list),
+              onSelected: (value) {
                 if (value == "2") {
-                  await authProvider.logout();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                  );
+                  _handleLogout(context, authProvider);
+                } else if (value == "1") {
+                  // TODO: chuyển đến màn hình hồ sơ cá nhân
+                  // Navigator.pushNamed(context, AppRoutes.profile);
                 }
               },
               itemBuilder:
-                  (context) => [
+                  (context) => const [
                     PopupMenuItem(value: "1", child: Text("Trang cá nhân")),
                     PopupMenuItem(value: "2", child: Text("Đăng xuất")),
                   ],
@@ -48,28 +53,35 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
-          // ✅ Thêm cuộn nếu nội dung dài
           child: Center(
             child: Column(
-              mainAxisSize: MainAxisSize.min, // ✅ Tránh tràn màn hình
+              mainAxisSize: MainAxisSize.min,
               children: [
-                user != null && user.photoURL != null
-                    ? Image.network(user.photoURL!, width: 50, height: 50)
-                    : Image.asset(
-                      "assets/images/default-avatar.png",
-                      width: 50,
-                      height: 50,
-                    ),
-                Text(
-                  user != null
-                      ? "Xin chào, ${user.email}"
-                      : "Bạn chưa đăng nhập!",
-                  style: TextStyle(fontSize: 18),
+                const SizedBox(height: 24),
+                ClipOval(
+                  child:
+                      user?.photoURL != null
+                          ? Image.network(
+                            user!.photoURL!,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          )
+                          : Image.asset(
+                            "assets/images/default-avatar.png",
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
                 ),
-                SizedBox(height: 20), // ✅ Thêm khoảng cách để tránh tràn
+                const SizedBox(height: 12),
+                Text(
+                  "Xin chào, ${user?.email ?? 'Người dùng'}",
+                  style: const TextStyle(fontSize: 18),
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),

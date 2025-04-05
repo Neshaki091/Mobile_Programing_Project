@@ -1,26 +1,44 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../firebase_service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthRepository {
-  final FirebaseService _firebaseService = FirebaseService();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  Future<User?> login(String email, String password) async {
-    return await _firebaseService.signInWithEmail(email, password);
+  // Lấy người dùng hiện tại
+  User? get currentUser => _firebaseAuth.currentUser;
+
+  // Đăng nhập với email và mật khẩu
+  Future<User?> signInWithEmail(String email, String password) async {
+    try {
+      final UserCredential userCredential = await _firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: password);
+      return userCredential.user;
+    } catch (e) {
+      // Xử lý lỗi
+      return null;
+    }
   }
 
-  Future<User?> register(String email, String password) async {
-    return await _firebaseService.signUpWithEmail(email, password);
+  Future<User?> signUpWithEmail(String email, String password) async {
+    final result = await _firebaseAuth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    return result.user;
   }
 
-  Future<User?> loginWithGoogle() async {
-    return await _firebaseService.loginWithGoogle();
+  Future<User?> signInWithGoogle() async {
+    final googleUser = await GoogleSignIn().signIn();
+    final googleAuth = await googleUser?.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+    final result = await _firebaseAuth.signInWithCredential(credential);
+    return result.user;
   }
 
-  Future<void> logout() async {
-    await _firebaseService.signOut();
-  }
-
-  User? getUser() {
-    return _firebaseService.getCurrentUser();
+  Future<void> signOut() async {
+    await _firebaseAuth.signOut();
   }
 }
