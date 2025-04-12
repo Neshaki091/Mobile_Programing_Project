@@ -82,4 +82,41 @@ class FirebaseService {
       throw e;
     }
   }
+
+  Future<Map<String, dynamic>> loadSchedule(String uid) async {
+    try {
+      final scheduleSnapshot =
+          await _firestore
+              .collection('users')
+              .doc(uid)
+              .collection('schedule')
+              .get();
+
+      final schedule = <String, dynamic>{};
+
+      for (var doc in scheduleSnapshot.docs) {
+        schedule[doc.id] = doc.data();
+      }
+
+      return schedule;
+    } catch (e) {
+      print('Error loading schedule: $e');
+      throw e;
+    }
+  }
+
+  Future<Map<String, List<String>>> getSchedule(String uid) async {
+    final doc = await _firestore.collection('workout_schedules').doc(uid).get();
+    if (!doc.exists) return {};
+
+    final data = doc.data()!;
+    return data.map((key, value) => MapEntry(key, List<String>.from(value)));
+  }
+
+  Future<void> saveSchedule(
+    String uid,
+    Map<String, List<String>> schedule,
+  ) async {
+    await _firestore.collection('workout_schedules').doc(uid).set(schedule);
+  }
 }

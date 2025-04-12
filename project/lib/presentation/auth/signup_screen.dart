@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import '../../providers/authentic_provider.dart'; // Adjust the import if necessary
-import 'login_screen.dart';
+import '../../providers/authentic_provider.dart';
+import '../../routes/app_routes.dart';
 import '../home/home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -45,16 +46,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     setState(() => _isLoading = true);
     try {
-      bool success = await Provider.of<AuthenticProvider>(context, listen: false)
-          .register(email, password);
+      bool success = await Provider.of<AuthenticProvider>(
+        context,
+        listen: false,
+      ).register(email, password);
 
       setState(() => _isLoading = false);
 
       if (success) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-        );
+        Navigator.pushReplacementNamed(context, AppRoutes.login);
       } else {
         _showErrorDialog("Đăng ký thất bại! Vui lòng thử lại.");
       }
@@ -67,16 +67,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Lỗi"),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("OK"),
+      builder:
+          (context) => AlertDialog(
+            title: Text("Lỗi"),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("OK"),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -84,45 +85,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 30.w),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 70),
+              SizedBox(height: 70.h),
               Image.asset(
                 "assets/images/logo_image.png",
-                width: 150,
-                height: 80,
+                width: 150.w,
+                height: 80.h,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 20.h),
               Text(
                 "Hãy bắt đầu vì sức khỏe của bạn",
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16.sp),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               _buildTextField(
                 _emailController,
                 "Email",
                 false,
                 TextInputType.emailAddress,
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               _buildTextField(_passwordController, "Mật khẩu", true),
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               _buildTextField(
                 _reEnterPassController,
                 "Nhập lại mật khẩu",
                 true,
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               Row(
                 children: [
                   Checkbox(
                     value: _isAccept,
                     onChanged: (bool? newValue) {
                       setState(() {
-                        _isAccept = newValue!;
+                        _isAccept = newValue ?? false;
                       });
                     },
                   ),
@@ -130,63 +130,63 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: Text(
                       "Đồng ý với Điều khoản Dịch vụ và Chính sách Quyền riêng tư của Fitness & Nutrition.",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                      style: TextStyle(color: Colors.grey, fontSize: 12.sp),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               _isLoading
                   ? CircularProgressIndicator()
                   : InkWell(
-                      onTap: () => _signUp(context),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 128,
-                          vertical: 12,
-                        ),
-                        child: Text(
-                          "Đăng ký",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    onTap: () => _signUp(context),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(5.r),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 110.w,
+                        vertical: 12.h,
+                      ),
+                      child: Text(
+                        "Đăng ký",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-              SizedBox(height: 20),
+                  ),
+              SizedBox(height: 20.h),
               _buildOrDivider(),
               IconButton(
                 icon: ClipOval(
                   child: Image.asset(
                     "assets/images/g-logo.png",
-                    width: 40,
-                    height: 40,
+                    width: 40.w,
+                    height: 40.h,
                   ),
                 ),
                 onPressed: () async {
                   try {
-                    bool success = await Provider.of<AuthenticProvider>(
-                      context,
-                      listen: false,
-                    ).loginWithGoogle();
+                    bool success =
+                        await Provider.of<AuthenticProvider>(
+                          context,
+                          listen: false,
+                        ).loginWithGoogle();
 
                     if (success) {
-                      final user = Provider.of<AuthenticProvider>(
-                        context,
-                        listen: false,
-                      ).user;
+                      final user =
+                          Provider.of<AuthenticProvider>(
+                            context,
+                            listen: false,
+                          ).user;
                       if (user != null) {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => HomeScreen(),
-                          ),
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -203,19 +203,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }
                 },
               ),
-              SizedBox(height: 80),
+              SizedBox(height: 120.h),
               Column(
                 children: [
                   Text(
                     "Bạn đã có tài khoản, đăng nhập",
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: Colors.grey, fontSize: 14.sp),
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
-                      );
+                      Navigator.pushReplacementNamed(context, AppRoutes.login);
                     },
                     child: Text(
                       "Đăng Nhập",
@@ -224,6 +221,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         decorationColor: Colors.grey,
                         color: Colors.grey,
                         fontWeight: FontWeight.bold,
+                        fontSize: 14.sp,
                       ),
                     ),
                   ),
@@ -248,7 +246,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       keyboardType: type,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
       ),
     );
   }
@@ -256,15 +254,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _buildOrDivider() {
     return Row(
       children: [
-        Expanded(child: Container(height: 1, color: Colors.black)),
+        Expanded(child: Container(height: 1.h, color: Colors.black)),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
           child: Text(
             "Hoặc đăng nhập với",
-            style: TextStyle(color: Colors.grey, fontSize: 12),
+            style: TextStyle(color: Colors.grey, fontSize: 12.sp),
           ),
         ),
-        Expanded(child: Container(height: 1, color: Colors.black)),
+        Expanded(child: Container(height: 1.h, color: Colors.black)),
       ],
     );
   }

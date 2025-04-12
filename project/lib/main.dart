@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'providers/workout_provider.dart';
+
 import 'routes/app_routes.dart';
 import 'providers/authentic_provider.dart';
 
@@ -15,17 +18,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create:
-          (_) =>
-              AuthenticProvider()
-                ..initializeAuth(), // Gọi phương thức khởi tạo để kiểm tra trạng thái đăng nhập
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => AuthenticProvider()..initializeAuth(),
+        ),
+        ChangeNotifierProvider(create: (_) => WorkoutProvider()),
+      ],
       child: Consumer<AuthenticProvider>(
         builder: (context, auth, _) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            initialRoute: auth.isLoggedIn ? AppRoutes.home : AppRoutes.login,
-            onGenerateRoute: AppRoutes.generateRoute,
+          return ScreenUtilInit(
+            designSize: const Size(375, 812),
+            minTextAdapt: true,
+            splitScreenMode: true,
+            builder: (context, child) {
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                initialRoute:
+                    auth.isLoggedIn ? AppRoutes.home : AppRoutes.login,
+                onGenerateRoute: AppRoutes.generateRoute,
+              );
+            },
           );
         },
       ),

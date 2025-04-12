@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../providers/authentic_provider.dart';
-import 'signup_screen.dart';
-import '../home/home_screen.dart';
+import '../../routes/app_routes.dart'; // Ensure this file contains the AppRoutes definition
+import '../../providers/workout_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -17,22 +18,26 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login(BuildContext context) async {
     setState(() => _isLoading = true);
 
-    bool success = await Provider.of<AuthenticProvider>(
+    final authProvider = Provider.of<AuthenticProvider>(context, listen: false);
+    final workoutProvider = Provider.of<WorkoutProvider>(
       context,
       listen: false,
-    ).login(_emailController.text, _passwordController.text);
+    );
+
+    bool success = await authProvider.login(
+      _emailController.text,
+      _passwordController.text,
+    );
 
     setState(() => _isLoading = false);
 
     if (success) {
-      final user =
-          Provider.of<AuthenticProvider>(context, listen: false).user;
+      final user = Provider.of<AuthenticProvider>(context, listen: false).user;
       if (user != null) {
-        // Chuyển đến HomeScreen sau khi đăng nhập thành công
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
+        workoutProvider.clearSchedule();
+        await workoutProvider.loadFromFirestore(user.uid);
+
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Không lấy được thông tin người dùng!")),
@@ -49,22 +54,20 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 30.w),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 70),
+              SizedBox(height: 70.h),
               Image.asset(
                 "assets/images/logo_image.png",
-                width: 200,
-                height: 120,
+                width: 200.w,
+                height: 120.h,
               ),
-              SizedBox(height: 30),
-              Text("Fitness & Nutrition", style: TextStyle(fontSize: 24)),
-              Text("Thể hình và dinh dưỡng", style: TextStyle(fontSize: 24)),
-              SizedBox(height: 30),
+              SizedBox(height: 30.h),
+              Text("Fitness & Nutrition", style: TextStyle(fontSize: 24.sp)),
+              Text("Thể hình và dinh dưỡng", style: TextStyle(fontSize: 24.sp)),
+              SizedBox(height: 30.h),
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -74,29 +77,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               TextField(
                 controller: _passwordController,
+                obscureText: true,
                 decoration: InputDecoration(
                   labelText: "Mật khẩu",
                   border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
                   ),
                 ),
-                obscureText: true,
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10.0),
+                padding: EdgeInsets.only(top: 10.h),
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     "Quên mật khẩu?",
-                    textAlign: TextAlign.right,
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    style: TextStyle(color: Colors.grey, fontSize: 12.sp),
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               _isLoading
                   ? CircularProgressIndicator()
                   : InkWell(
@@ -104,79 +106,68 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.blue,
-                        borderRadius: BorderRadius.circular(5),
+                        borderRadius: BorderRadius.circular(5.r),
                       ),
                       padding: EdgeInsets.symmetric(
-                        horizontal: 117,
-                        vertical: 12,
+                        horizontal: 100.w,
+                        vertical: 12.h,
                       ),
                       child: Text(
                         "Đăng nhập",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: 1,
-                    width: 100,
-                    child: Container(
-                      width: 50, // Độ dài gạch ngang
-                      height: 4, // Độ dày gạch
-                      color: Colors.black, // Màu sắc
-                    ),
-                  ),
-                  SizedBox(width: 10),
+                  Container(width: 50.w, height: 2.h, color: Colors.black),
+                  SizedBox(width: 10.w),
                   Text(
                     "Hoặc đăng nhập với",
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    style: TextStyle(color: Colors.grey, fontSize: 12.sp),
                   ),
-                  SizedBox(width: 10),
-                  SizedBox(
-                    height: 1,
-                    width: 100,
-                    child: Container(
-                      width: 50, // Độ dài gạch ngang
-                      height: 4, // Độ dày gạch
-                      color: Colors.black, // Màu sắc
-                    ),
-                  ),
+                  SizedBox(width: 10.w),
+                  Container(width: 50.w, height: 2.h, color: Colors.black),
                 ],
               ),
+              SizedBox(height: 10.h),
               IconButton(
                 icon: ClipOval(
                   child: Image.asset(
                     "assets/images/g-logo.png",
-                    width: 40,
-                    height: 40,
+                    width: 40.w,
+                    height: 40.h,
                   ),
                 ),
                 onPressed: () async {
-                  bool success =
-                      await Provider.of<AuthenticProvider>(
-                        context,
-                        listen: false,
-                      ).loginWithGoogle();
+                  setState(() => _isLoading = true);
+
+                  final authProvider = Provider.of<AuthenticProvider>(
+                    context,
+                    listen: false,
+                  );
+                  final workoutProvider = Provider.of<WorkoutProvider>(
+                    context,
+                    listen: false,
+                  );
+
+                  bool success = await authProvider.loginWithGoogle();
 
                   setState(() => _isLoading = false);
 
                   if (success) {
-                    final user =
-                        Provider.of<AuthenticProvider>(
-                          context,
-                          listen: false,
-                        ).user;
+                    final user = authProvider.user;
                     if (user != null) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
-                      );
+                      workoutProvider.clearSchedule();
+                      await workoutProvider.loadFromFirestore(user.uid);
+
+                      Navigator.pushReplacementNamed(context, AppRoutes.home);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -189,38 +180,29 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
                 },
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 100),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Column(
-                    children: [
-                      Text(
-                        "Bạn chưa có tài khoản",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignUpScreen(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          "Đăng Ký",
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.grey,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
+              SizedBox(height: 100.h),
+              Column(
+                children: [
+                  Text(
+                    "Bạn chưa có tài khoản?",
+                    style: TextStyle(color: Colors.grey, fontSize: 14.sp),
                   ),
-                ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, AppRoutes.signup);
+                    },
+                    child: Text(
+                      "Đăng Ký",
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.grey,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
