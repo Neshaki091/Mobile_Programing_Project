@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 class NutritionModel {
+  final String food_imageUrl;
   final String foodName;
   final String servingSize;
   final String calories;
@@ -8,6 +9,7 @@ class NutritionModel {
   final Vitamins vitamins;
 
   NutritionModel({
+    required this.food_imageUrl,
     required this.foodName,
     required this.servingSize,
     required this.calories,
@@ -17,6 +19,7 @@ class NutritionModel {
 
   factory NutritionModel.fromJson(Map<String, dynamic> json) {
     return NutritionModel(
+      food_imageUrl: json['food_imageUrl'] ?? '',
       foodName: json['food_name'] ?? '',
       servingSize: json['serving_size'] ?? '',
       calories: json['calories'] ?? '',
@@ -87,10 +90,7 @@ class Carbohydrates {
   final String total;
   final String sugar;
 
-  Carbohydrates({
-    required this.total,
-    required this.sugar,
-  });
+  Carbohydrates({required this.total, required this.sugar});
 
   factory Carbohydrates.fromJson(Map<String, dynamic> json) {
     return Carbohydrates(
@@ -124,10 +124,7 @@ class Vitamin {
   final String amount;
   final String dailyValue;
 
-  Vitamin({
-    required this.amount,
-    required this.dailyValue,
-  });
+  Vitamin({required this.amount, required this.dailyValue});
 
   factory Vitamin.fromJson(Map<String, dynamic> json) {
     return Vitamin(

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../providers/authentic_provider.dart';
-import '../../routes/app_routes.dart'; // Ensure this file contains the AppRoutes definition
 import '../../providers/schedule_provider.dart';
+import '../../routes/app_routes.dart';
+import '../../widgets/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -25,18 +26,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     bool success = await authProvider.login(
-      _emailController.text,
-      _passwordController.text,
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
     );
 
     setState(() => _isLoading = false);
 
     if (success) {
-      final user = Provider.of<AuthenticProvider>(context, listen: false).user;
+      final user = authProvider.user;
       if (user != null) {
         workoutProvider.clearSchedule();
         await workoutProvider.loadFromFirestore(user.uid);
-
         Navigator.pushReplacementNamed(context, AppRoutes.home);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -47,6 +47,34 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Đăng nhập không thành công!")));
+    }
+  }
+
+  void _loginWithGoogle(BuildContext context) async {
+    setState(() => _isLoading = true);
+
+    final authProvider = Provider.of<AuthenticProvider>(context, listen: false);
+    final workoutProvider = Provider.of<WorkoutProvider>(
+      context,
+      listen: false,
+    );
+
+    bool success = await authProvider.loginWithGoogle();
+    setState(() => _isLoading = false);
+
+    if (success) {
+      final user = authProvider.user;
+      if (user != null) {
+        workoutProvider.clearSchedule();
+        await workoutProvider.loadFromFirestore(user.uid);
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Không lấy được thông tin người dùng từ Google!"),
+          ),
+        );
+      }
     }
   }
 
@@ -68,117 +96,12 @@ class _LoginScreenState extends State<LoginScreen> {
               Text("Fitness & Nutrition", style: TextStyle(fontSize: 24.sp)),
               Text("Thể hình và dinh dưỡng", style: TextStyle(fontSize: 24.sp)),
               SizedBox(height: 30.h),
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                ),
-              ),
-              SizedBox(height: 10.h),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Mật khẩu",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10.h),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    "Quên mật khẩu?",
-                    style: TextStyle(color: Colors.grey, fontSize: 12.sp),
-                  ),
-                ),
-              ),
-              SizedBox(height: 10.h),
-              _isLoading
-                  ? CircularProgressIndicator()
-                  : InkWell(
-                    onTap: () => _login(context),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(5.r),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 100.w,
-                        vertical: 12.h,
-                      ),
-                      child: Text(
-                        "Đăng nhập",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-              SizedBox(height: 10.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(width: 50.w, height: 2.h, color: Colors.black),
-                  SizedBox(width: 10.w),
-                  Text(
-                    "Hoặc đăng nhập với",
-                    style: TextStyle(color: Colors.grey, fontSize: 12.sp),
-                  ),
-                  SizedBox(width: 10.w),
-                  Container(width: 50.w, height: 2.h, color: Colors.black),
-                ],
-              ),
-              SizedBox(height: 10.h),
-              IconButton(
-                icon: ClipOval(
-                  child: Image.asset(
-                    "assets/images/g-logo.png",
-                    width: 40.w,
-                    height: 40.h,
-                  ),
-                ),
-                onPressed: () async {
-                  setState(() => _isLoading = true);
-
-                  final authProvider = Provider.of<AuthenticProvider>(
-                    context,
-                    listen: false,
-                  );
-                  final workoutProvider = Provider.of<WorkoutProvider>(
-                    context,
-                    listen: false,
-                  );
-
-                  bool success = await authProvider.loginWithGoogle();
-
-                  setState(() => _isLoading = false);
-
-                  if (success) {
-                    final user = authProvider.user;
-                    if (user != null) {
-                      workoutProvider.clearSchedule();
-                      await workoutProvider.loadFromFirestore(user.uid);
-
-                      Navigator.pushReplacementNamed(context, AppRoutes.home);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "Không lấy được thông tin người dùng từ Google!",
-                          ),
-                        ),
-                      );
-                    }
-                  }
-                },
+              LoginWidget(
+                emailController: _emailController,
+                passwordController: _passwordController,
+                isLoading: _isLoading,
+                onLogin: () => _login(context),
+                onGoogleLogin: () => _loginWithGoogle(context),
               ),
               SizedBox(height: 100.h),
               Column(

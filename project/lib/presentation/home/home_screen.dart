@@ -7,7 +7,9 @@ import '../../providers/authentic_provider.dart';
 import '../../providers/schedule_provider.dart';
 import '../../routes/app_routes.dart';
 import '../../firebase_service.dart';
-import 'editScheduleScreen.dart'; // ✅ Sửa lại import
+import 'editScheduleScreen.dart';
+import '../../widgets/appBar_widget.dart'; // Đã sửa import nếu cần
+// ✅ Import thêm nếu chưa có
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -18,12 +20,13 @@ class _HomeScreenState extends State<HomeScreen> {
   late FirebaseService _firebaseService;
   late Future<List<Map<String, String>>> _productsFuture;
 
+  int currentIndex = 0;
+
   @override
   void initState() {
     super.initState();
     _firebaseService = FirebaseService();
     _productsFuture = _firebaseService.getProducts();
-    
   }
 
   Future<void> _handleLogout(
@@ -35,7 +38,25 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
     ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
   }
-  
+
+  void onTap(int index) {
+    setState(() => currentIndex = index);
+
+    switch (index) {
+      case 0:
+        // Ở Home rồi
+        break;
+      case 1:
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthenticProvider>(context);
@@ -264,18 +285,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        bottomNavigationBar: BottomAppBar(
-          height: 60.h,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              IconButton(icon: Icon(Icons.home_filled), onPressed: () {}),
-              IconButton(icon: Icon(Icons.fitness_center), onPressed: () {}),
-              IconButton(icon: Icon(Icons.bookmark), onPressed: () {}),
-              IconButton(icon: Icon(Icons.emoji_events), onPressed: () {}),
-              IconButton(icon: Icon(Icons.account_circle), onPressed: () {}),
-            ],
-          ),
+        bottomNavigationBar: BottomNavBar(
+          currentIndex: currentIndex,
+          onTap: onTap,
         ),
       ),
     );
@@ -341,9 +353,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
-
-
-
 
   int _dayIndex(String day) {
     const days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
