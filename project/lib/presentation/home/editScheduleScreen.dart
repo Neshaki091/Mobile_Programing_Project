@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/workout_provider.dart';
+import '../../providers/schedule_provider.dart';
 import '../../providers/authentic_provider.dart';
 import '../../routes/app_routes.dart'; // Ensure AppRoutes is imported
 import 'package:flutter_screenutil/flutter_screenutil.dart';

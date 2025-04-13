@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../providers/authentic_provider.dart';
 import '../../routes/app_routes.dart'; // Ensure this file contains the AppRoutes definition
-import '../../providers/workout_provider.dart';
+import '../../providers/schedule_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override

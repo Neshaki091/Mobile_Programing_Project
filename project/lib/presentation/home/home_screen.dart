@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
 
 import '../../providers/authentic_provider.dart';
-import '../../providers/workout_provider.dart';
+import '../../providers/schedule_provider.dart';
 import '../../routes/app_routes.dart';
 import '../../firebase_service.dart';
 import 'editScheduleScreen.dart'; // ✅ Sửa lại import
