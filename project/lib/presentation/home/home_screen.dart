@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _firebaseService = FirebaseService();
     _productsFuture = _firebaseService.getProducts();
+    
   }
 
   Future<void> _handleLogout(
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
     ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
   }
-
+  
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthenticProvider>(context);
@@ -82,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (value == "2") {
                     _handleLogout(context, authProvider);
                   } else if (value == "1") {
-                    Navigator.pushReplacementNamed(
+                    Navigator.pushNamed(
                       context,
                       AppRoutes.profile,
                       arguments: authProvider.authRepo,
@@ -340,6 +341,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
+
+
+
 
   int _dayIndex(String day) {
     const days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];

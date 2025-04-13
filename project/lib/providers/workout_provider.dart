@@ -92,7 +92,6 @@ class WorkoutProvider with ChangeNotifier {
     }
   }
 
-  /// 📋 Copy dữ liệu từ một Provider khác (dùng khi khởi tạo
   void clearSchedule() {
   for (var item in _schedule) {
     item.exercises.clear();

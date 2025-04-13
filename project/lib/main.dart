@@ -3,9 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'providers/workout_provider.dart';
-
-import 'routes/app_routes.dart';
 import 'providers/authentic_provider.dart';
+import 'routes/app_routes.dart'; // Import SplashScreen
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +34,7 @@ class MyApp extends StatelessWidget {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
                 initialRoute:
-                    auth.isLoggedIn ? AppRoutes.home : AppRoutes.login,
+                    AppRoutes.splash, // SplashScreen sẽ là màn hình đầu tiên
                 onGenerateRoute: AppRoutes.generateRoute,
               );
             },
