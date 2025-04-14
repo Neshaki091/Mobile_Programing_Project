@@ -9,6 +9,8 @@ import '../data/repositories/auth_repository.dart';
 import '../presentation/home/editScheduleScreen.dart';
 import '../presentation/splashScreen.dart';
 import '../presentation/community/community.dart';
+import '../presentation/nutrition/nutrition_detail_screen.dart';
+import '../data/models/nutrition_model.dart';
 
 class AppRoutes {
   static const String splash = '/splash';
@@ -19,6 +21,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String editSchedule = '/editSchedule';
   static const String community = '/community';
+  static const String nutritionDetail = '/nutritionDetail';
   static final Map<String, WidgetBuilder> _routes = {
     splash: (_) => SplashScreen(),
     login: (_) => LoginScreen(),
@@ -29,6 +32,13 @@ class AppRoutes {
   };
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
+    if (settings.name == nutritionDetail) {
+      final map = settings.arguments as Map<String, dynamic>;
+      final nutritionModel = NutritionModel.fromJson(map);
+      return MaterialPageRoute(
+        builder: (_) => NutritionDetailScreen(nutritionModel: nutritionModel),
+      );
+    }
     if (settings.name == profile) {
       final authRepo = settings.arguments as AuthRepository?;
       if (authRepo != null) {

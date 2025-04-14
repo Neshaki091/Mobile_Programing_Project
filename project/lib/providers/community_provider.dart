@@ -1,6 +1,5 @@
 import '../data/repositories/community_repository.dart';
 import '../data/models/message.dart';
-import '../data/models/user_model.dart';
 
 class ChatService {
   final CommunityRepository _communityRepo = CommunityRepository();

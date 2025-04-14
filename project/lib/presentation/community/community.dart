@@ -4,7 +4,7 @@ import '../../providers/community_provider.dart';
 import '../../data/models/message.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../routes/app_routes.dart';
-import '../../data/models/user_model.dart';
+
 class Community extends StatefulWidget {
   final User user;
 
@@ -101,9 +101,13 @@ class _CommunityState extends State<Community> {
                     final isMe = message.userId == userId;
 
                     return Align(
-                      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                      alignment:
+                          isMe ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 4.h,
+                        ),
                         padding: EdgeInsets.all(10.w),
                         decoration: BoxDecoration(
                           color: isMe ? Colors.blueAccent : Colors.grey[300],
@@ -116,12 +120,14 @@ class _CommunityState extends State<Community> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 CircleAvatar(
-                                  backgroundImage: message.avatarUrl.isNotEmpty
-                                      ? NetworkImage(message.avatarUrl)
-                                      : null,
-                                  child: message.avatarUrl.isEmpty
-                                      ? Icon(Icons.person)
-                                      : null,
+                                  backgroundImage:
+                                      message.avatarUrl.isNotEmpty
+                                          ? NetworkImage(message.avatarUrl)
+                                          : null,
+                                  child:
+                                      message.avatarUrl.isEmpty
+                                          ? Icon(Icons.person)
+                                          : null,
                                   radius: 15.r,
                                 ),
                                 SizedBox(width: 8.w),
@@ -168,10 +174,7 @@ class _CommunityState extends State<Community> {
                   ),
                 ),
                 SizedBox(width: 8.w),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: _sendMessage,
-                ),
+                IconButton(icon: Icon(Icons.send), onPressed: _sendMessage),
               ],
             ),
           ),

@@ -4,7 +4,6 @@ import '../models/message.dart';
 import '../repositories/auth_repository.dart';
 
 class CommunityRepository {
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
   final DatabaseReference _messagesRef = FirebaseDatabase.instance.ref(
     'messages',
   );
