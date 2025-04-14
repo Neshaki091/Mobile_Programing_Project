@@ -55,6 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
       case 4:
         Navigator.pushNamed(context, AppRoutes.community);
         break;
+      case 5:
+        Navigator.pushNamed(context, AppRoutes.profile);
+        break;
     }
   }
 

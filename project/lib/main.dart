@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'providers/schedule_provider.dart';
 import 'providers/authentic_provider.dart';
+import '../../core/theme.dart';
 import 'routes/app_routes.dart'; // Import SplashScreen
 
 void main() async {
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
             builder: (context, child) {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
+                theme: appTheme,
                 initialRoute:
                     AppRoutes.splash, // SplashScreen sẽ là màn hình đầu tiên
                 onGenerateRoute: AppRoutes.generateRoute,
