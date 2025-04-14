@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:project/presentation/profile/EditProfileScreen.dart';
 import 'package:project/widgets/info_card.dart';
+import '../../routes/app_routes.dart';
+import '../../widgets/appBar_widget.dart';
 
 final user = FirebaseAuth.instance.currentUser;
 
@@ -12,6 +14,28 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  int currentIndex = 5;
+  void onTap(int index) {
+    setState(() => currentIndex = index);
+
+    switch (index) {
+      case 0:
+        Navigator.pushNamed(context, AppRoutes.home);
+        break;
+      case 1:
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      case 4:
+        Navigator.pushNamed(context, AppRoutes.community);
+        break;
+      case 5:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +108,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   Text(
                     'Cài đặt',
-                    style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   SizedBox(height: 8.h),
                   SettingsTile(
@@ -93,7 +120,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => EditProfileScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => EditProfileScreen(),
+                        ),
                       );
                     },
                   ),
@@ -135,6 +164,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: currentIndex,
+        onTap: onTap,
       ),
     );
   }

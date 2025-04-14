@@ -259,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     final products = snapshot.data!;
 
                     return Container(
-                      height: 180.h,
+                      height: 160.h,
                       child: ListView.builder(
                         itemCount: products.length,
                         shrinkWrap: true,

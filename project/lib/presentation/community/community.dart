@@ -4,7 +4,6 @@ import '../../providers/community_provider.dart';
 import '../../data/models/message.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../routes/app_routes.dart';
-import '../../data/models/user_model.dart';
 class Community extends StatefulWidget {
   final User user;
 

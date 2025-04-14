@@ -10,7 +10,6 @@ import '../presentation/home/editScheduleScreen.dart';
 import '../presentation/splashScreen.dart';
 import '../presentation/community/community.dart';
 
-
 class AppRoutes {
   static const String splash = '/splash';
   static const String login = '/login';
@@ -28,27 +27,9 @@ class AppRoutes {
     editSchedule: (_) => EditScheduleScreen(),
     community: (_) => Community(FirebaseAuth.instance.currentUser!),
     profile: (_) => ProfileScreen(),
-    
   };
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
-    if (settings.name == profile) {
-      final authRepo = settings.arguments as AuthRepository?;
-      if (authRepo != null) {
-        return MaterialPageRoute(
-          builder: (_) => ProfileScreen(),
-        );
-      } else {
-        return MaterialPageRoute(
-          builder:
-              (_) => Scaffold(
-                appBar: AppBar(title: Text('Error')),
-                body: Center(child: Text('Thiếu AuthRepository')),
-              ),
-        );
-      }
-    }
-
     if (settings.name == home) {
       return MaterialPageRoute(
         builder:
