@@ -26,22 +26,22 @@ class BottomNavBar extends StatelessWidget {
             onPressed: () => onTap(1),
           ),
           IconButton(
-            icon: Icon(Icons.bookmark),
+            icon: Icon(Icons.bookmark_outline),
             color: currentIndex == 2 ? Colors.blue : Colors.grey,
             onPressed: () => onTap(2),
           ),
           IconButton(
-            icon: Icon(Icons.emoji_events),
+            icon: Icon(Icons.emoji_events_outlined),
             color: currentIndex == 3 ? Colors.blue : Colors.grey,
             onPressed: () => onTap(3),
           ),
           IconButton(
-            icon: Icon(Icons.group),
+            icon: Icon(Icons.group_outlined),
             color: currentIndex == 4 ? Colors.blue : Colors.grey,
             onPressed: () => onTap(4),
           ),
           IconButton(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.account_circle_outlined),
             color: currentIndex == 5 ? Colors.blue : Colors.grey,
             onPressed: () => onTap(5),
           ),

@@ -10,7 +10,6 @@ import '../presentation/home/editScheduleScreen.dart';
 import '../presentation/splashScreen.dart';
 import '../presentation/community/community.dart';
 
-
 class AppRoutes {
   static const String splash = '/splash';
   static const String login = '/login';
@@ -27,57 +26,41 @@ class AppRoutes {
     nutrition: (_) => NutritionScreen(),
     editSchedule: (_) => EditScheduleScreen(),
     community: (_) => Community(FirebaseAuth.instance.currentUser!),
-    profile: (_) => ProfileScreen(),
-    
+    // Không cần định nghĩa profile route ở đây vì đã xử lý riêng trong generateRoute
   };
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     if (settings.name == profile) {
-      final authRepo = settings.arguments as AuthRepository?;
-      if (authRepo != null) {
-        return MaterialPageRoute(
-          builder: (_) => ProfileScreen(),
-        );
-      } else {
-        return MaterialPageRoute(
-          builder:
-              (_) => Scaffold(
-                appBar: AppBar(title: Text('Error')),
-                body: Center(child: Text('Thiếu AuthRepository')),
-              ),
-        );
-      }
+      return MaterialPageRoute(
+        builder: (_) => ProfileScreen(authRepo: AuthRepository()), // Truyền AuthRepository vào đây
+      );
     }
 
     if (settings.name == home) {
       return MaterialPageRoute(
-        builder:
-            (context) => WillPopScope(
-              onWillPop: () async {
-                final shouldExit = await showDialog<bool>(
-                  context: context, // ✅ Sửa ở đây
-                  builder:
-                      (dialogContext) => AlertDialog(
-                        title: Text('Thoát ứng dụng'),
-                        content: Text('Bạn có chắc chắn muốn thoát không?'),
-                        actions: [
-                          TextButton(
-                            onPressed:
-                                () => Navigator.of(dialogContext).pop(false),
-                            child: Text('Không'),
-                          ),
-                          TextButton(
-                            onPressed:
-                                () => Navigator.of(dialogContext).pop(true),
-                            child: Text('Có'),
-                          ),
-                        ],
-                      ),
-                );
-                return shouldExit ?? false;
-              },
-              child: HomeScreen(),
-            ),
+        builder: (context) => WillPopScope(
+          onWillPop: () async {
+            final shouldExit = await showDialog<bool>(
+              context: context,
+              builder: (dialogContext) => AlertDialog(
+                title: Text('Thoát ứng dụng'),
+                content: Text('Bạn có chắc chắn muốn thoát không?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                    child: Text('Không'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                    child: Text('Có'),
+                  ),
+                ],
+              ),
+            );
+            return shouldExit ?? false;
+          },
+          child: HomeScreen(),
+        ),
       );
     }
 

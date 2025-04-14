@@ -4,7 +4,6 @@ import '../../providers/community_provider.dart';
 import '../../data/models/message.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../routes/app_routes.dart';
-import '../../data/models/user_model.dart';
 class Community extends StatefulWidget {
   final User user;
 
@@ -119,10 +118,10 @@ class _CommunityState extends State<Community> {
                                   backgroundImage: message.avatarUrl.isNotEmpty
                                       ? NetworkImage(message.avatarUrl)
                                       : null,
+                                  radius: 15.r,
                                   child: message.avatarUrl.isEmpty
                                       ? Icon(Icons.person)
                                       : null,
-                                  radius: 15.r,
                                 ),
                                 SizedBox(width: 8.w),
                                 Text(
