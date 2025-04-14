@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../../data/models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // Lấy người dùng hiện tại
   User? get currentUser => _firebaseAuth.currentUser;
 
@@ -40,5 +42,20 @@ class AuthRepository {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+  }
+
+  Future<UserProfile?> getUserProfile(String uid) async {
+    final doc = await _firestore.collection('users').doc(uid).get();
+    if (doc.exists) {
+      return UserProfile.fromMap(doc.data()!);
+    }
+    return null;
+  }
+
+  Future<void> updateUserProfile(UserProfile profile) async {
+    await _firestore
+        .collection('users')
+        .doc(profile.uid)
+        .set(profile.toMap(), SetOptions(merge: true));
   }
 }

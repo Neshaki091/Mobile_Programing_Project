@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../data/repositories/auth_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticProvider with ChangeNotifier {
   final AuthRepository _authRepo = AuthRepository();
@@ -11,6 +12,7 @@ class AuthenticProvider with ChangeNotifier {
   }
 
   User? get user => _user;
+  AuthRepository get authRepo => _authRepo; // ✅ expose authRepo
 
   Future<void> initializeAuth() async {
     _user = _authRepo.currentUser;
@@ -26,7 +28,6 @@ class AuthenticProvider with ChangeNotifier {
       notifyListeners();
       return _user != null;
     } catch (e) {
-      // Xử lý lỗi và trả về false nếu không thành công
       return false;
     }
   }
@@ -37,7 +38,6 @@ class AuthenticProvider with ChangeNotifier {
       notifyListeners();
       return _user != null;
     } catch (e) {
-      // Xử lý lỗi và trả về false nếu không thành công
       return false;
     }
   }
@@ -48,13 +48,16 @@ class AuthenticProvider with ChangeNotifier {
       notifyListeners();
       return _user != null;
     } catch (e) {
-      // Xử lý lỗi và trả về false nếu không thành công
       return false;
     }
   }
 
-  Future<void> logout() async {
-    await _authRepo.signOut();
+  Future<void> signOut() async {
+    // Xoá lịch tập local khi đăng xuất
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('workout_schedule');
+
+    await FirebaseAuth.instance.signOut();
     _user = null;
     notifyListeners();
   }
