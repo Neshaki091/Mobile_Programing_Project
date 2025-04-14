@@ -42,8 +42,8 @@ class BottomNavBar extends StatelessWidget {
           ),
           IconButton(
             icon: Icon(Icons.person),
-            color: currentIndex == 4 ? Colors.blue : Colors.grey,
-            onPressed: () => onTap(4),
+            color: currentIndex == 5 ? Colors.blue : Colors.grey,
+            onPressed: () => onTap(5),
           ),
         ],
       ),

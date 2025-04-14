@@ -3,7 +3,8 @@ class UserProfile {
   final String email;
   final String name;
   final double height;
-  final double weight; // URL của ảnh đại diện
+  final double weight;
+  final String avatarUrl; // URL của ảnh đại diện
   // Lịch tập
 
   UserProfile({
@@ -12,6 +13,7 @@ class UserProfile {
     required this.name,
     required this.height,
     required this.weight,
+    this.avatarUrl = '', // Khởi tạo avatarUrl với giá trị mặc định
   });
 
   factory UserProfile.fromMap(Map<String, dynamic> map) {

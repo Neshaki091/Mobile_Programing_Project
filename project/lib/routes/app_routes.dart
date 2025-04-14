@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../presentation/auth/login_screen.dart';
 import '../presentation/auth/signup_screen.dart';
@@ -7,6 +8,7 @@ import '../presentation/profile/profile_screen.dart';
 import '../data/repositories/auth_repository.dart';
 import '../presentation/home/editScheduleScreen.dart';
 import '../presentation/splashScreen.dart';
+import '../presentation/community/community.dart';
 
 class AppRoutes {
   static const String splash = '/splash';
@@ -16,13 +18,14 @@ class AppRoutes {
   static const String nutrition = '/nutrition';
   static const String profile = '/profile';
   static const String editSchedule = '/editSchedule';
-
+  static const String community = '/community';
   static final Map<String, WidgetBuilder> _routes = {
     splash: (_) => SplashScreen(),
     login: (_) => LoginScreen(),
     signup: (_) => SignUpScreen(),
     nutrition: (_) => NutritionScreen(),
     editSchedule: (_) => EditScheduleScreen(),
+    community: (_) => Community(FirebaseAuth.instance.currentUser!),
   };
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
