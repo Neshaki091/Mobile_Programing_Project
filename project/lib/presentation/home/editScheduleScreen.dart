@@ -36,6 +36,27 @@ class EditScheduleScreen extends StatelessWidget {
     );
   }
 
+  void _threaten(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("lời khuyên"),
+          content: Text(
+            "Bạn chỉ nên tập 3 đến 4 nhóm cơ một ngày để tránh sự mệt mỏi và quá tải lên cơ bắp của bạn",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+
+              child: Text('Vâng tôi đã hiểu'),
+            ),
+          ],
+        );
+      },
+    );
+  } // Nếu đã chọn 4 nhóm cơ, không cho phép chọn thêm
+
   void _editExercises(BuildContext context, String day, List<String> selected) {
     showDialog(
       context: context,
@@ -56,11 +77,14 @@ class EditScheduleScreen extends StatelessWidget {
                           title: Text(exercise),
                           onChanged: (value) {
                             setState(() {
-                              if (value == true &&
-                                  !tempSelected.contains(exercise)) {
-                                tempSelected.add(exercise);
+                              if (value == true && tempSelected.length < 4) {
+                                if (!tempSelected.contains(exercise)) {
+                                  tempSelected.add(exercise);
+                                }
                               } else if (value == false) {
                                 tempSelected.remove(exercise);
+                              } else {
+                                _threaten(context);
                               }
                             });
                           },

@@ -74,6 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
+          shadowColor: Colors.white,
+          backgroundColor: Colors.white,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          elevation: 0,
           automaticallyImplyLeading: false,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -121,168 +125,170 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-        body: Container(
-          color: const Color.fromARGB(255, 245, 245, 245),
-          child: SafeArea(
-            child: Column(
-              children: [
-                InkWell(
-                  onTap:
-                      () => Navigator.pushNamed(context, AppRoutes.nutrition),
-                  child: Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.symmetric(
-                      vertical: 10.h,
-                      horizontal: 20.w,
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      vertical: 15.h,
-                      horizontal: 20.w,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 179, 221, 255),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Text(
-                      "Dinh Dưỡng",
-                      style: TextStyle(fontSize: 18),
+        body: SingleChildScrollView(
+          child: Container(
+            color: const Color.fromARGB(255, 245, 245, 245),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap:
+                        () => Navigator.pushNamed(context, AppRoutes.nutrition),
+                    child: Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.symmetric(
+                        vertical: 10.h,
+                        horizontal: 20.w,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 15.h,
+                        horizontal: 20.w,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 179, 221, 255),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Text(
+                        "Dinh Dưỡng",
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 2,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.0.w,
-                        vertical: 10.h,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Text(
-                                'Lịch tập của bạn:',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const Spacer(),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => EditScheduleScreen(),
-                                    ),
-                                  );
-                                },
-                                child: Row(
-                                  children: [
-                                    const Text(
-                                      "Chỉnh Sửa",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                    SizedBox(width: 4.w),
-                                    Icon(
-                                      Icons.mode_edit_outlined,
-                                      color: Colors.grey,
-                                      size: 20.w,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 5.h),
-                          Consumer<WorkoutProvider>(
-                            builder: (context, workoutProvider, _) {
-                              return Table(
-                                border: TableBorder.symmetric(
-                                  inside: BorderSide(
-                                    width: 0.2.w,
-                                    color: Colors.grey.shade300,
+                      elevation: 2,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.0.w,
+                          vertical: 10.h,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Text(
+                                  'Lịch tập của bạn:',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                columnWidths: {
-                                  0: FixedColumnWidth(60.w),
-                                  1: FlexColumnWidth(),
-                                },
-                                children:
-                                    workoutProvider.schedule
-                                        .map(
-                                          (item) => buildScheduleRow(
-                                            item.day,
-                                            item.exercises,
-                                          ),
-                                        )
-                                        .toList(),
-                              );
-                            },
-                          ),
-                        ],
+                                const Spacer(),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => EditScheduleScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Row(
+                                    children: [
+                                      const Text(
+                                        "Chỉnh Sửa",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Icon(
+                                        Icons.mode_edit_outlined,
+                                        color: Colors.grey,
+                                        size: 20.w,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Consumer<WorkoutProvider>(
+                              builder: (context, workoutProvider, _) {
+                                return Table(
+                                  border: TableBorder.symmetric(
+                                    inside: BorderSide(
+                                      width: 0.2.w,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                  ),
+                                  columnWidths: {
+                                    0: FixedColumnWidth(60.w),
+                                    1: FlexColumnWidth(),
+                                  },
+                                  children:
+                                      workoutProvider.schedule
+                                          .map(
+                                            (item) => buildScheduleRow(
+                                              item.day,
+                                              item.exercises,
+                                            ),
+                                          )
+                                          .toList(),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: 10.h),
-                Text(
-                  'Thực phẩm bổ sung',
-                  style: TextStyle(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                  SizedBox(height: 10.h),
+                  Text(
+                    'Thực phẩm bổ sung',
+                    style: TextStyle(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
                   ),
-                ),
-                FutureBuilder<List<Map<String, String>>>(
-                  future: _productsFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Lỗi khi tải dữ liệu: ${snapshot.error}'),
-                      );
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('Không có sản phẩm'));
-                    }
+                  FutureBuilder<List<Map<String, String>>>(
+                    future: _productsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text('Lỗi khi tải dữ liệu: ${snapshot.error}'),
+                        );
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('Không có sản phẩm'));
+                      }
 
-                    final products = snapshot.data!;
+                      final products = snapshot.data!;
 
-                    return Container(
-                      height: 180.h,
-                      child: ListView.builder(
-                        itemCount: products.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          var product = products[index];
-                          return Card(
-                            margin: EdgeInsets.symmetric(
-                              vertical: 5.h,
-                              horizontal: 20.h,
-                            ),
-                            elevation: 3,
-                            child: ListTile(
-                              leading: Image.network(product['imageUrl']!),
-                              title: Text(product['name']!),
-                              subtitle: Text(
-                                product['description'] ?? 'Không có mô tả',
+                      return Container(
+                        height: 180.h,
+                        child: ListView.builder(
+                          itemCount: products.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            var product = products[index];
+                            return Card(
+                              margin: EdgeInsets.symmetric(
+                                vertical: 5.h,
+                                horizontal: 20.h,
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 10.h),
-              ],
+                              elevation: 3,
+                              child: ListTile(
+                                leading: Image.network(product['imageUrl']!),
+                                title: Text(product['name']!),
+                                subtitle: Text(
+                                  product['description'] ?? 'Không có mô tả',
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 10.h),
+                ],
+              ),
             ),
           ),
         ),
