@@ -5,7 +5,6 @@ import '../presentation/auth/signup_screen.dart';
 import '../presentation/home/home_screen.dart';
 import '../presentation/nutrition/nutrition_screen.dart';
 import '../presentation/profile/profile_screen.dart';
-import '../data/repositories/auth_repository.dart';
 import '../presentation/home/editScheduleScreen.dart';
 import '../presentation/splashScreen.dart';
 import '../presentation/community/community.dart';
