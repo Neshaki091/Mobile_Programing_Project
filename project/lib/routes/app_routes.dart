@@ -9,6 +9,7 @@ import '../data/repositories/auth_repository.dart';
 import '../presentation/home/editScheduleScreen.dart';
 import '../presentation/splashScreen.dart';
 import '../presentation/community/community.dart';
+import '../presentation/journey/journey_screen.dart';
 
 class AppRoutes {
   static const String splash = '/splash';
@@ -19,6 +20,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String editSchedule = '/editSchedule';
   static const String community = '/community';
+  static const String journey = '/journey';
   static final Map<String, WidgetBuilder> _routes = {
     splash: (_) => SplashScreen(),
     login: (_) => LoginScreen(),
@@ -26,13 +28,22 @@ class AppRoutes {
     nutrition: (_) => NutritionScreen(),
     editSchedule: (_) => EditScheduleScreen(),
     community: (_) => Community(FirebaseAuth.instance.currentUser!),
-    // Không cần định nghĩa profile route ở đây vì đã xử lý riêng trong generateRoute
+    profile: (_) => ProfileScreen(authRepo: AuthRepository()), 
+    journey: (_) => JourneyScreen(authRepo: AuthRepository()),
+    
   };
+
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     if (settings.name == profile) {
       return MaterialPageRoute(
-        builder: (_) => ProfileScreen(authRepo: AuthRepository()), // Truyền AuthRepository vào đây
+        builder: (_) => ProfileScreen(authRepo: AuthRepository()), 
+      );
+    }
+
+    if (settings.name == journey) {
+      return MaterialPageRoute(
+        builder: (_) => JourneyScreen(authRepo: AuthRepository()),
       );
     }
 

@@ -21,6 +21,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
   final _ageController = TextEditingController(); // Thêm controller cho tuổi
+  final _genderController = TextEditingController();
   
   late String avatarUrl;
 
@@ -36,18 +37,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     final profile = await widget.authRepo.getUserProfile(uid);
     if (profile != null) {
-      _nameController.text = profile.name;
-      _weightController.text = profile.weight.toString();
-      _heightController.text = profile.height.toString();
-      _ageController.text = profile.age?.toString() ?? ''; // Tải tuổi từ profile
-      avatarUrl =
-          widget.authRepo.currentUser?.photoURL ??
-          ''; // Lấy URL ảnh từ Firebase Auth
+      setState(() {
+        _nameController.text = profile.name;
+        _weightController.text = profile.weight.toString();
+        _heightController.text = profile.height.toString();
+        _ageController.text = profile.age?.toString() ?? '';
+        _genderController.text = profile.isMale ? 'Nam' : 'Nữ';
+        avatarUrl = widget.authRepo.currentUser?.photoURL ?? '';
+      });
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('name', profile.name);
       await prefs.setDouble('weight', profile.weight);
       await prefs.setDouble('height', profile.height);
+      await prefs.setString('gender', profile.isMale ? 'Nam' : 'Nữ');
       if (profile.age != null) {
         await prefs.setInt('age', profile.age!); // Lưu tuổi vào SharedPreferences
       }
@@ -67,6 +70,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       weight: double.tryParse(_weightController.text) ?? 0,
       height: double.tryParse(_heightController.text) ?? 0,
       age: int.tryParse(_ageController.text), // Thêm tuổi vào profile
+      isMale: _genderController.text == 'Nam',
     );
 
     await widget.authRepo.updateUserProfile(profile);
@@ -75,6 +79,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     await prefs.setString('name', profile.name);
     await prefs.setDouble('weight', profile.weight);
     await prefs.setDouble('height', profile.height);
+    await prefs.setString('gender', profile.isMale ? 'Nam' : 'Nữ');
     if (profile.age != null) {
       await prefs.setInt('age', profile.age!); // Lưu tuổi vào SharedPreferences
     }
@@ -134,7 +139,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
 
               // Hiển thị ảnh đại diện
-              SizedBox(height: 20),
+              SizedBox(height: 20.h),
               TextField(
                 controller: _nameController,
                 decoration: InputDecoration(labelText: 'Họ tên'),
@@ -155,6 +160,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 decoration: InputDecoration(labelText: 'Tuổi'),
                 keyboardType: TextInputType.number,
                 cursorColor: Colors.blue,
+              ),
+              SizedBox(height: 20.h),
+              Text('Giới tính'),
+              SizedBox(height: 8.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 8.w),
+                    child: ChoiceChip(
+                      label: Text('Nam'),
+                      selected: _genderController.text == 'Nam',
+                      selectedColor: Colors.blue[100],
+                      onSelected: (selected) {
+                        if (selected) {
+                          setState(() {
+                            _genderController.text = 'Nam';
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  ChoiceChip(
+                    label: Text('Nữ'),
+                    selected: _genderController.text == 'Nữ',
+                    selectedColor: Colors.blue[100],
+                    onSelected: (selected) {
+                      if (selected) {
+                        setState(() {
+                          _genderController.text = 'Nữ';
+                        });
+                      }
+                    },
+                  ),
+                ],
               ),
               TextField(
                 controller: TextEditingController(

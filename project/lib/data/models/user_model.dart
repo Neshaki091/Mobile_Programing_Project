@@ -6,6 +6,7 @@ class UserProfile {
   final double weight;
   final String avatarUrl; // URL của ảnh đại diện
   final int? age;
+  final bool isMale; // Thêm thuộc tính giới tính
 
   UserProfile({
     required this.uid,
@@ -15,6 +16,7 @@ class UserProfile {
     required this.weight,
     this.avatarUrl = '', // Khởi tạo avatarUrl với giá trị mặc định
     this.age,
+    this.isMale = true, // Giới tính mặc định là nam
   });
 
   factory UserProfile.fromMap(Map<String, dynamic> map) {
@@ -25,6 +27,7 @@ class UserProfile {
       height: (map['height'] ?? 0).toDouble(),
       weight: (map['weight'] ?? 0).toDouble(), // Lấy URL ảnh đại diện từ map
       age: map['age'],
+      isMale: map['isMale'] ?? true, // Giới tính mặc định là nam
     );
   }
 
@@ -36,6 +39,7 @@ class UserProfile {
       'height': height,
       'weight': weight, // Lưu URL ảnh đại diện vào map
       'age': age,
+      'isMale': isMale,
     };
   }
 }
