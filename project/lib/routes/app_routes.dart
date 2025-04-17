@@ -23,6 +23,7 @@ class AppRoutes {
     signup: (_) => SignUpScreen(),
     nutrition: (_) => NutritionScreen(),
     editSchedule: (_) => EditScheduleScreen(),
+    
   };
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {

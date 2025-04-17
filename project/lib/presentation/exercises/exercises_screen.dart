@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '..//workouts/workout_detail_screen.dart';
-
 class EmptyPage extends StatefulWidget {
   final String title;
   final String subtitle;

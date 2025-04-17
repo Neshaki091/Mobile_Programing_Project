@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import '..//exercises/exercises_screen.dart';
 import 'workout_detail_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-void main() async{
-   WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp();
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -63,12 +63,21 @@ class _YAppWithTabState extends State<YAppWithTab> {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: "Exercises"),
-          BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: "Workouts"),
-          BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: "Journey"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.fitness_center),
+            label: "Exercises",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark),
+            label: "Workouts",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.emoji_events),
+            label: "Journey",
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
-        currentIndex: _selectedIndex,        
+        currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
     );
@@ -156,7 +165,6 @@ class _HomeScreenState extends State<ExercisesScreen> {
   List<Map<String, String>> filteredItems = [];
   List<String> selectedFilters = [];
 
-
   @override
   void initState() {
     super.initState();
@@ -167,25 +175,28 @@ class _HomeScreenState extends State<ExercisesScreen> {
     String query = _searchController.text.toLowerCase();
 
     setState(() {
-      filteredItems = items.where((item) {
-        final title = item['title']?.toLowerCase() ?? '';
-        final subtitle = item['subtitle']?.toLowerCase() ?? '';
+      filteredItems =
+          items.where((item) {
+            final title = item['title']?.toLowerCase() ?? '';
+            final subtitle = item['subtitle']?.toLowerCase() ?? '';
 
-        // Kiểm tra theo từ khóa tìm kiếm
-        bool matchesSearch = title.contains(query) || subtitle.contains(query);
+            // Kiểm tra theo từ khóa tìm kiếm
+            bool matchesSearch =
+                title.contains(query) || subtitle.contains(query);
 
-        // Kiểm tra theo bộ lọc nếu có
-        bool matchesFilter = selectedFilters.isEmpty || selectedFilters.any((filter) =>
-        title.contains(filter.toLowerCase()) || subtitle.contains(filter.toLowerCase())
-        );
+            // Kiểm tra theo bộ lọc nếu có
+            bool matchesFilter =
+                selectedFilters.isEmpty ||
+                selectedFilters.any(
+                  (filter) =>
+                      title.contains(filter.toLowerCase()) ||
+                      subtitle.contains(filter.toLowerCase()),
+                );
 
-        return matchesSearch && matchesFilter;
-      }).toList();
+            return matchesSearch && matchesFilter;
+          }).toList();
     });
   }
-
-
-
 
   void _openFilterDialog() async {
     final result = await showDialog<List<String>>(
@@ -209,13 +220,10 @@ class _HomeScreenState extends State<ExercisesScreen> {
     }
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Chọn bài tập phù hợp"),centerTitle: true,),
+      appBar: AppBar(title: Text("Chọn bài tập phù hợp"), centerTitle: true),
       body: Column(
         children: [
           Padding(
@@ -265,7 +273,10 @@ class _HomeScreenState extends State<ExercisesScreen> {
                 }
 
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
                   child: Card(
                     elevation: 3,
                     shape: RoundedRectangleBorder(
@@ -279,7 +290,11 @@ class _HomeScreenState extends State<ExercisesScreen> {
                         height: 50,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
-                          return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
+                          return Icon(
+                            Icons.image_not_supported,
+                            size: 50,
+                            color: Colors.grey,
+                          );
                         },
                       ),
                       title: Column(
@@ -287,7 +302,10 @@ class _HomeScreenState extends State<ExercisesScreen> {
                         children: [
                           Text(
                             item["title"]!,
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Text(
                             item["subtitle"]!,
@@ -310,16 +328,21 @@ class _HomeScreenState extends State<ExercisesScreen> {
                           ),
                         ],
                       ),
-                      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => EmptyPage(
-                              title: item["title"]!,
-                              subtitle: item["subtitle"]!,
-                              image: item["image"]!,
-                            ),
+                            builder:
+                                (context) => EmptyPage(
+                                  title: item["title"]!,
+                                  subtitle: item["subtitle"]!,
+                                  image: item["image"]!,
+                                ),
                           ),
                         );
                       },
@@ -333,8 +356,6 @@ class _HomeScreenState extends State<ExercisesScreen> {
       ),
     );
   }
-
-
 }
 
 // Trang trống khi click vào một mục
@@ -370,9 +391,11 @@ class _FilterDialogState extends State<FilterDialog> {
 
   void _applyFilters() {
     Navigator.of(context).pop(
-        filterOptions.where((f) => f.isSelected).map<String>((f) => f.name).toList()
+      filterOptions
+          .where((f) => f.isSelected)
+          .map<String>((f) => f.name)
+          .toList(),
     );
-
   }
 
   @override
@@ -381,27 +404,25 @@ class _FilterDialogState extends State<FilterDialog> {
       title: Text("Chọn bộ lọc"),
       content: Wrap(
         spacing: 8,
-        children: filterOptions.map((option) {
-          return FilterChip(
-            label: Text(option.name),
-            selected: option.isSelected,
-            onSelected: (selected) {
-              setState(() {
-                option.isSelected = selected;
-              });
-            },
-          );
-        }).toList(),
+        children:
+            filterOptions.map((option) {
+              return FilterChip(
+                label: Text(option.name),
+                selected: option.isSelected,
+                onSelected: (selected) {
+                  setState(() {
+                    option.isSelected = selected;
+                  });
+                },
+              );
+            }).toList(),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(null),
           child: Text("Hủy"),
         ),
-        ElevatedButton(
-          onPressed: _applyFilters,
-          child: Text("Áp dụng"),
-        ),
+        ElevatedButton(onPressed: _applyFilters, child: Text("Áp dụng")),
       ],
     );
   }
@@ -414,9 +435,7 @@ class OtherScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(title, style: TextStyle(fontSize: 24)),
-    );
+    return Center(child: Text(title, style: TextStyle(fontSize: 24)));
   }
 }
 
