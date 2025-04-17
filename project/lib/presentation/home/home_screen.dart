@@ -77,10 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          shadowColor: Colors.white,
-          backgroundColor: Colors.white,
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
-          elevation: 0,
           automaticallyImplyLeading: false,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -312,7 +308,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 4.h),
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 2.h),
+            padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 4.h),
             decoration: BoxDecoration(
               color:
                   _isToday
@@ -332,20 +328,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 4.w),
+          padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 4.h),
           child:
               exercises.isNotEmpty
                   ? Container(
                     padding: EdgeInsets.symmetric(
                       vertical: 5.h,
-                      horizontal: 10.w,
+                      horizontal: 4.w,
                     ),
                     decoration: BoxDecoration(
                       color: _isToday ? Colors.blue : Colors.blue[50],
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Wrap(
-                      spacing: 10.w,
+                      spacing: 5.w,
                       children:
                           exercises.map((e) {
                             return Text(
