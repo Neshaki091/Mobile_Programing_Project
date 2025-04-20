@@ -11,7 +11,7 @@ class NutritionDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.black,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -37,7 +37,7 @@ class NutritionDetailScreen extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Colors.transparent, Colors.grey],
+                        colors: [Colors.transparent, Colors.black],
                       ),
                     ),
                   ),
@@ -87,22 +87,22 @@ class NutritionDetailScreen extends StatelessWidget {
               children: [
                 Text(
                   'Calories: ${nutritionModel.calories}',
-                  style: TextStyle(fontSize: 18.sp),
+                  style: TextStyle(fontSize: 18.sp, color: Colors.white),
                 ),
                 SizedBox(height: 8.h),
                 Text(
                   'Protein: ${nutritionModel.nutrients.protein}g',
-                  style: TextStyle(fontSize: 18.sp),
+                  style: TextStyle(fontSize: 18.sp, color: Colors.white),
                 ),
                 SizedBox(height: 8.h),
                 Text(
                   'Carbohydrates: ${nutritionModel.nutrients.carbohydrates.total}g',
-                  style: TextStyle(fontSize: 18.sp),
+                  style: TextStyle(fontSize: 18.sp, color: Colors.white),
                 ),
                 SizedBox(height: 8.h),
                 Text(
                   'Fat: ${nutritionModel.nutrients.fat.total}g',
-                  style: TextStyle(fontSize: 18.sp),
+                  style: TextStyle(fontSize: 18.sp, color: Colors.white),
                 ),
               ],
             ),

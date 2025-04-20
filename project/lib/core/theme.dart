@@ -28,6 +28,7 @@ final ThemeData appTheme = ThemeData(
     elevation: 0,
     backgroundColor: AppColors.light,
     foregroundColor: AppColors.primary,
+    surfaceTintColor: AppColors.light,
   ),
   textTheme: const TextTheme(
     bodyLarge: AppTextStyles.body,
