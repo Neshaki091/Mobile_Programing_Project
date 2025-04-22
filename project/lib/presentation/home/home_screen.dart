@@ -49,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         break;
       case 2:
+        Navigator.pushNamed(context, AppRoutes.workout);
         break;
       case 3:
         break;
@@ -206,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                             SizedBox(height: 5.h),
-                            Consumer<WorkoutProvider>(
+                            Consumer<ScheduleProvider>(
                               builder: (context, workoutProvider, _) {
                                 return Table(
                                   border: TableBorder.symmetric(

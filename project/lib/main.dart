@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 import 'providers/schedule_provider.dart';
 import 'providers/authentic_provider.dart';
 import '../../core/theme.dart';
-import 'routes/app_routes.dart'; // Import SplashScreen
+import 'routes/app_routes.dart';
+import 'providers/workout_provider.dart'; // Import SplashScreen
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => AuthenticProvider()..initializeAuth(),
         ),
+        ChangeNotifierProvider(create: (_) => ScheduleProvider()),
         ChangeNotifierProvider(create: (_) => WorkoutProvider()),
       ],
       child: Consumer<AuthenticProvider>(

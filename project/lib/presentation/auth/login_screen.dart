@@ -20,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     final authProvider = Provider.of<AuthenticProvider>(context, listen: false);
-    final workoutProvider = Provider.of<WorkoutProvider>(
+    final workoutProvider = Provider.of<ScheduleProvider>(
       context,
       listen: false,
     );
@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     final authProvider = Provider.of<AuthenticProvider>(context, listen: false);
-    final workoutProvider = Provider.of<WorkoutProvider>(
+    final workoutProvider = Provider.of<ScheduleProvider>(
       context,
       listen: false,
     );

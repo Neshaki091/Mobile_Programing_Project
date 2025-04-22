@@ -71,6 +71,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       height:
           double.tryParse(_heightController.text) ??
           0, // Giữ avatarUrl cũ từ Firebase Auth
+      favorites: List<String>.empty(), // Danh sách bài tập yêu thích trống
+      myWorkouts: List<String>.empty(),
     );
 
     await widget.authRepo.updateUserProfile(profile);

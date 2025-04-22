@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/models/workoutSchedule.dart';
 
-class WorkoutProvider with ChangeNotifier {
+class ScheduleProvider with ChangeNotifier {
   final List<WorkoutSchedule> _schedule = [
     WorkoutSchedule(day: 'MON', exercises: []),
     WorkoutSchedule(day: 'TUE', exercises: []),
@@ -41,7 +41,6 @@ class WorkoutProvider with ChangeNotifier {
   /// 🟢 Load from Firestore
   Future<void> loadFromFirestore(String uid) async {
     try {
-      
       final doc =
           await FirebaseFirestore.instance
               .collection('workout_schedules')
@@ -93,10 +92,9 @@ class WorkoutProvider with ChangeNotifier {
   }
 
   void clearSchedule() {
-  for (var item in _schedule) {
-    item.exercises.clear();
+    for (var item in _schedule) {
+      item.exercises.clear();
+    }
+    notifyListeners();
   }
-  notifyListeners();
-}
-
 }

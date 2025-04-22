@@ -4,7 +4,9 @@ class UserProfile {
   final String name;
   final double height;
   final double weight;
-  final String avatarUrl; // URL của ảnh đại diện
+  final String avatarUrl;
+  final List<String> favorites; // Danh sách ID bài tập yêu thích
+  final List<String> myWorkouts; // URL của ảnh đại diện
   // Lịch tập
 
   UserProfile({
@@ -13,7 +15,9 @@ class UserProfile {
     required this.name,
     required this.height,
     required this.weight,
-    this.avatarUrl = '', // Khởi tạo avatarUrl với giá trị mặc định
+    this.avatarUrl = '',
+    required this.favorites,
+    required this.myWorkouts // Khởi tạo avatarUrl với giá trị mặc định
   });
 
   factory UserProfile.fromMap(Map<String, dynamic> map) {
@@ -22,7 +26,9 @@ class UserProfile {
       email: map['email'],
       name: map['name'] ?? '',
       height: (map['height'] ?? 0).toDouble(),
-      weight: (map['weight'] ?? 0).toDouble(), // Lấy URL ảnh đại diện từ map
+      weight: (map['weight'] ?? 0).toDouble(),
+      favorites: List<String>.from(map['favorites'] ?? []),
+      myWorkouts: List<String>.from(map['myWorkouts'] ?? []), // Lấy URL ảnh đại diện từ map
     );
   }
 

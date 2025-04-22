@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:project/presentation/workouts/workouts_screen.dart';
 import '../presentation/auth/login_screen.dart';
 import '../presentation/auth/signup_screen.dart';
 import '../presentation/home/home_screen.dart';
@@ -22,6 +23,8 @@ class AppRoutes {
   static const String editSchedule = '/editSchedule';
   static const String community = '/community';
   static const String nutritionDetail = '/nutritionDetail';
+  static const String exercises = '/exercises';
+  static const String workout = '/workout';
   static final Map<String, WidgetBuilder> _routes = {
     splash: (_) => SplashScreen(),
     login: (_) => LoginScreen(),
@@ -29,6 +32,7 @@ class AppRoutes {
     nutrition: (_) => NutritionScreen(),
     editSchedule: (_) => EditScheduleScreen(),
     community: (_) => Community(FirebaseAuth.instance.currentUser!),
+    workout: (_) => WorkoutScreen(),
   };
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
