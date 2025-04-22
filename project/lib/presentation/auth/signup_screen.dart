@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import '../../widgets/auth_provider.dart';
+import '../../widgets/auth_widget.dart';
 import '../../providers/authentic_provider.dart'; // Giả sử bạn có một provider cho xác thực
 
 class SignUpScreen extends StatefulWidget {

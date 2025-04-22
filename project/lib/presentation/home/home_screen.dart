@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:project/providers/schedule_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
 
 import '../../providers/authentic_provider.dart';
-import '../../providers/schedule_provider.dart';
 import '../../routes/app_routes.dart';
 import '../../firebase_service.dart';
 import 'editScheduleScreen.dart';
@@ -47,12 +47,16 @@ class _HomeScreenState extends State<HomeScreen> {
         // Ở Home rồi
         break;
       case 1:
+        Navigator.pushNamed(context, AppRoutes.exercises);
         break;
       case 2:
+        Navigator.pushNamed(context, AppRoutes.workout);
         break;
       case 3:
         break;
       case 4:
+        break;
+      case 5:
         break;
     }
   }
@@ -200,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           SizedBox(height: 5.h),
-                          Consumer<WorkoutProvider>(
+                          Consumer<ScheduleProvider>(
                             builder: (context, workoutProvider, _) {
                               return Table(
                                 border: TableBorder.symmetric(

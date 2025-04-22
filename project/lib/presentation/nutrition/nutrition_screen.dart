@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/repositories/nutrition_repository.dart';
 import '../../providers/nutrition_provider.dart';
-import '../../widgets/nutrition_provider.dart';
+import '../../widgets/nutrition_widget.dart';
 
 class NutritionScreen extends StatelessWidget {
   @override

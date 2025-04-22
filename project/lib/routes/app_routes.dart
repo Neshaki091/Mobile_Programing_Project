@@ -7,6 +7,7 @@ import '../presentation/profile/profile_screen.dart';
 import '../data/repositories/auth_repository.dart';
 import '../presentation/home/editScheduleScreen.dart';
 import '../presentation/splashScreen.dart';
+import '../presentation/workouts/workouts_screen.dart';
 
 class AppRoutes {
   static const String splash = '/splash';
@@ -16,6 +17,8 @@ class AppRoutes {
   static const String nutrition = '/nutrition';
   static const String profile = '/profile';
   static const String editSchedule = '/editSchedule';
+  static const String exercises = '/exercises';
+  static const String workout = '/workout';
 
   static final Map<String, WidgetBuilder> _routes = {
     splash: (_) => SplashScreen(),
@@ -23,7 +26,7 @@ class AppRoutes {
     signup: (_) => SignUpScreen(),
     nutrition: (_) => NutritionScreen(),
     editSchedule: (_) => EditScheduleScreen(),
-    
+    workout: (_) => WorkoutScreen(),
   };
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {

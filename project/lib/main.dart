@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'providers/schedule_provider.dart';
 import 'providers/authentic_provider.dart';
+import 'providers/workout_provider.dart';
 import 'routes/app_routes.dart'; // Import SplashScreen
 
 void main() async {
@@ -23,6 +24,9 @@ class MyApp extends StatelessWidget {
           create: (_) => AuthenticProvider()..initializeAuth(),
         ),
         ChangeNotifierProvider(create: (_) => WorkoutProvider()),
+        ChangeNotifierProvider(
+          create: (_) => ScheduleProvider(),
+        ), // <- thêm dòng này
       ],
       child: Consumer<AuthenticProvider>(
         builder: (context, auth, _) {
@@ -33,8 +37,7 @@ class MyApp extends StatelessWidget {
             builder: (context, child) {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
-                initialRoute:
-                    AppRoutes.splash, // SplashScreen sẽ là màn hình đầu tiên
+                initialRoute: AppRoutes.splash,
                 onGenerateRoute: AppRoutes.generateRoute,
               );
             },

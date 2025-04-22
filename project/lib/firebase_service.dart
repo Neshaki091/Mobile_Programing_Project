@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project/data/models/workout_model.dart';
 
 class FirebaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -118,5 +119,18 @@ class FirebaseService {
     Map<String, List<String>> schedule,
   ) async {
     await _firestore.collection('workout_schedules').doc(uid).set(schedule);
+  }
+
+  // Lấy tất cả bài tập từ Firestore
+  Future<List<Workout>> getAllWorkouts() async {
+    final snapshot = await _firestore.collection('workouts').get();
+    return snapshot.docs
+        .map((doc) => Workout.fromMap(doc.data(), doc.id))
+        .toList();
+  }
+
+  // Thêm bài tập vào Firestore
+  Future<void> addWorkout(Workout workout) async {
+    await _firestore.collection('workouts').add(workout.toMap());
   }
 }

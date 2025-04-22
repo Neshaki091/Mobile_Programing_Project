@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/authentic_provider.dart';
 import '../../providers/schedule_provider.dart';
 import '../../routes/app_routes.dart';
-import '../../widgets/auth_provider.dart';
+import '../../widgets/auth_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -20,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     final authProvider = Provider.of<AuthenticProvider>(context, listen: false);
-    final workoutProvider = Provider.of<WorkoutProvider>(
+    final workoutProvider = Provider.of<ScheduleProvider>(
       context,
       listen: false,
     );
@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     final authProvider = Provider.of<AuthenticProvider>(context, listen: false);
-    final workoutProvider = Provider.of<WorkoutProvider>(
+    final workoutProvider = Provider.of<ScheduleProvider>(
       context,
       listen: false,
     );

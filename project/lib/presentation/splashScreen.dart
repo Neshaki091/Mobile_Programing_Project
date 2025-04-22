@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project/providers/schedule_provider.dart';
 import 'package:provider/provider.dart';
-import '../providers/schedule_provider.dart';
 import '../providers/authentic_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:async';
@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen>
   // Tải dữ liệu khi khởi tạo
   Future<void> _loadData() async {
     final authProvider = Provider.of<AuthenticProvider>(context, listen: false);
-    final workoutProvider = Provider.of<WorkoutProvider>(
+    final scheduleProvider = Provider.of<ScheduleProvider>(
       context,
       listen: false,
     );
@@ -40,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen>
     final userId = authProvider.user?.uid;
 
     if (userId != null) {
-      await workoutProvider.loadFromFirestore(userId);
+      await scheduleProvider.loadFromFirestore(userId);
     } else {
       debugPrint('User not logged in or userId is null');
     }

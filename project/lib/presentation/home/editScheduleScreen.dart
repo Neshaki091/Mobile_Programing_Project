@@ -18,7 +18,7 @@ class EditScheduleScreen extends StatelessWidget {
   ];
 
   Future<void> _saveSchedule(BuildContext context) async {
-    final workoutProvider = Provider.of<WorkoutProvider>(
+    final workoutProvider = Provider.of<ScheduleProvider>(
       context,
       listen: false,
     );
@@ -79,7 +79,7 @@ class EditScheduleScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Provider.of<WorkoutProvider>(
+                Provider.of<ScheduleProvider>(
                   context,
                   listen: false,
                 ).updateExercises(day, tempSelected);
@@ -95,7 +95,7 @@ class EditScheduleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final workoutProvider = Provider.of<WorkoutProvider>(context);
+    final workoutProvider = Provider.of<ScheduleProvider>(context);
     final schedule = workoutProvider.schedule;
 
     return Scaffold(
