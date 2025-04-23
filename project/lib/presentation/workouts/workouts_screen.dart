@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/workout_provider.dart';
-import '../../widgets/workout_widget.dart';
+import '../../widgets/workout_widget.dart'; // Ensure this import exists
 import '../../widgets/appBar_widget.dart';
 import '../../routes/app_routes.dart';
 
@@ -16,6 +16,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int currentIndex = 2;
+
   void onTap(int index) {
     setState(() => currentIndex = index);
 
@@ -24,9 +25,9 @@ class _WorkoutScreenState extends State<WorkoutScreen>
         Navigator.pushNamed(context, AppRoutes.home);
         break;
       case 1:
+        Navigator.pushNamed(context, AppRoutes.exercise);
         break;
       case 2:
-        Navigator.pushNamed(context, AppRoutes.workout);
         break;
       case 3:
         break;
@@ -40,6 +41,14 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+
+    // Lắng nghe sự thay đổi của tab để cập nhật currentIndex
+    _tabController.addListener(() {
+      setState(() {
+        currentIndex = _tabController.index;
+      });
+    });
+
     Provider.of<WorkoutProvider>(context, listen: false).loadWorkouts();
     Provider.of<WorkoutProvider>(context, listen: false).loadMyWorkouts();
   }
@@ -54,8 +63,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   Widget build(BuildContext context) {
     final workoutProvider = Provider.of<WorkoutProvider>(context);
     final workouts = workoutProvider.workouts;
-    final myWorkouts =
-        workoutProvider.myWorkouts; // Lấy danh sách "Bài tập của tôi"
+    final myWorkouts = workoutProvider.myWorkouts;
 
     return Scaffold(
       appBar: AppBar(
@@ -75,31 +83,37 @@ class _WorkoutScreenState extends State<WorkoutScreen>
               : TabBarView(
                 controller: _tabController,
                 children: [
-                  // Tab Tất cả bài tập
-                  ListView.builder(
-                    itemCount: workouts.length,
-                    itemBuilder: (context, index) {
-                      return WorkoutItemWidget(
-                        workout: workouts[index],
-                        onAddToMyWorkouts: () {
-                          // Thêm bài tập vào "Bài tập của tôi"
-                          workoutProvider.addToMyWorkouts(workouts[index]);
-                        },
-                      );
-                    },
-                  ),
+                  SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildWorkoutGroup('Tay', workouts, workoutProvider),
+                        buildWorkoutGroup('Chân', workouts, workoutProvider),
+                        buildWorkoutGroup('Lưng', workouts, workoutProvider),
+                        buildWorkoutGroup('Bụng', workouts, workoutProvider),
+                        buildWorkoutGroup('Ngực', workouts, workoutProvider),
+                        buildWorkoutGroup('Vai', workouts, workoutProvider),
+                      ],
+                    ),
+                  ), // Tab Tất cả bài tập
                   // Tab Bài tập yêu thích
-                  ListView.builder(
-                    itemCount: workouts.length,
-                    itemBuilder: (context, index) {
-                      return WorkoutItemWidget(workout: workouts[index]);
-                    },
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children:
+                          workouts.map((workout) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: WorkoutItemWidget(workout: workout),
+                            );
+                          }).toList(),
+                    ),
                   ),
                   // Tab Bài tập của tôi
                   ListView.builder(
                     itemCount: myWorkouts.length,
                     itemBuilder: (context, index) {
-                      return WorkoutItemWidget(
+                      return ExerciseItemWidget(
                         workout: myWorkouts[index],
                         onRemoveFromMyWorkouts: () {
                           // Xóa bài tập khỏi "Bài tập của tôi"
@@ -112,9 +126,99 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                   ),
                 ],
               ),
+
       bottomNavigationBar: BottomNavBar(
         currentIndex: currentIndex,
         onTap: onTap,
+      ),
+      floatingActionButton:
+          _tabController.index ==
+                  2 // Chỉ hiển thị khi ở Tab "Bài tập của tôi"
+              ? FloatingActionButton(
+                onPressed: () {
+                  _showAddWorkoutDialog(workoutProvider);
+                },
+                child: const Icon(Icons.add),
+                tooltip: 'Thêm bài tập',
+              )
+              : null, // Nếu không phải tab "Bài tập của tôi", không hiển thị FAB
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.centerFloat, // Nút ở dưới bên trái
+    );
+  }
+
+  void _showAddWorkoutDialog(WorkoutProvider workoutProvider) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Chọn bài tập'),
+          content: SizedBox(
+            height: 300,
+            width: double.maxFinite,
+            child: ListView.builder(
+              itemCount: workoutProvider.workouts.length,
+              itemBuilder: (context, index) {
+                final workout = workoutProvider.workouts[index];
+                return ListTile(
+                  title: Text(workout.name),
+                  onTap: () {
+                    workoutProvider.addToMyWorkouts(workout);
+                    Navigator.pop(context); // Đóng dialog sau khi chọn
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildWorkoutGroup(
+    String group,
+    List<dynamic> workouts,
+    WorkoutProvider workoutProvider,
+  ) {
+    final groupWorkouts =
+        workouts
+            .where(
+              (workout) =>
+                  workout.muscleGroup != null && workout.muscleGroup == group,
+            )
+            .toList();
+
+    if (groupWorkouts.isEmpty) return SizedBox();
+
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+            child: Text(
+              group,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children:
+                  groupWorkouts.map((workout) {
+                    return Padding(
+                      padding: const EdgeInsets.all(0),
+                      child: WorkoutItemWidget(
+                        workout: workout,
+                        onAddToMyWorkouts: () {
+                          workoutProvider.addToMyWorkouts(workout);
+                        },
+                      ),
+                    );
+                  }).toList(),
+            ),
+          ),
+        ],
       ),
     );
   }

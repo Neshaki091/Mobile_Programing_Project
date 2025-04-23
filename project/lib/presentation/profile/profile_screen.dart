@@ -73,6 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           0, // Giữ avatarUrl cũ từ Firebase Auth
       favorites: List<String>.empty(), // Danh sách bài tập yêu thích trống
       myWorkouts: List<String>.empty(),
+      friends: List<String>.empty(),
     );
 
     await widget.authRepo.updateUserProfile(profile);

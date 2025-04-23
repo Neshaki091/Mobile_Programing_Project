@@ -6,11 +6,14 @@ import 'providers/schedule_provider.dart';
 import 'providers/authentic_provider.dart';
 import '../../core/theme.dart';
 import 'routes/app_routes.dart';
-import 'providers/workout_provider.dart'; // Import SplashScreen
+import 'providers/workout_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  // Khởi tạo thông báo local
+
   runApp(const MyApp());
 }
 
@@ -24,7 +27,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => AuthenticProvider()..initializeAuth(),
         ),
-        ChangeNotifierProvider(create: (_) => ScheduleProvider()),
+        ChangeNotifierProvider(
+          create:
+              (_) => ScheduleProvider(), // Provider đã có local notification
+        ),
         ChangeNotifierProvider(create: (_) => WorkoutProvider()),
       ],
       child: Consumer<AuthenticProvider>(
@@ -36,8 +42,7 @@ class MyApp extends StatelessWidget {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
                 theme: appTheme,
-                initialRoute:
-                    AppRoutes.splash, // SplashScreen sẽ là màn hình đầu tiên
+                initialRoute: AppRoutes.splash,
                 onGenerateRoute: AppRoutes.generateRoute,
               );
             },

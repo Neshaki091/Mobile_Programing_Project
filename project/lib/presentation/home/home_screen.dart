@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
-
+import '../../data/repositories/auth_repository.dart';
 import '../../providers/authentic_provider.dart';
 import '../../providers/schedule_provider.dart';
 import '../../routes/app_routes.dart';
 import '../../firebase_service.dart';
 import 'editScheduleScreen.dart';
-import '../../widgets/appBar_widget.dart'; // Đã sửa import nếu cần
-// ✅ Import thêm nếu chưa có
+import '../../widgets/appBar_widget.dart';
 
 class HomeScreen extends StatefulWidget {
+  final AuthRepository authRepo;
+
+  HomeScreen({required this.authRepo});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -27,6 +30,32 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _firebaseService = FirebaseService();
     _productsFuture = _firebaseService.getProducts();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkUserInfo();
+    });
+  }
+
+  void _checkUserInfo() async {
+    final authProvider = Provider.of<AuthenticProvider>(context, listen: false);
+    final uid = widget.authRepo.currentUser?.uid;
+    if (uid == null) return;
+
+    try {
+      final profile = await widget.authRepo.getUserProfile(uid);
+
+      if (profile == null ||
+          profile.name.isEmpty ||
+          profile.name.trim().isEmpty) {
+        // Nếu chưa có profile hoặc tên bị thiếu => bắt cập nhật
+        Navigator.pushNamed(
+          context,
+          AppRoutes.profile,
+          arguments: authProvider.authRepo,
+        );
+      }
+    } catch (e) {
+      print("Lỗi khi kiểm tra thông tin người dùng: $e");
+    }
   }
 
   Future<void> _handleLogout(
@@ -44,9 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     switch (index) {
       case 0:
-        // Ở Home rồi
         break;
       case 1:
+        Navigator.pushNamed(context, AppRoutes.exercise);
         break;
       case 2:
         Navigator.pushNamed(context, AppRoutes.workout);

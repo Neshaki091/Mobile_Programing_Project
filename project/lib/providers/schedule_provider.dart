@@ -25,7 +25,6 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
-  /// 🔴 Save to Firestore
   Future<void> saveToFirestore(String uid) async {
     try {
       final data = {for (var item in _schedule) item.day: item.exercises};
@@ -38,7 +37,6 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
-  /// 🟢 Load from Firestore
   Future<void> loadFromFirestore(String uid) async {
     try {
       final doc =
@@ -61,7 +59,6 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
-  /// 💾 Save to SharedPreferences (Local)
   Future<void> saveToLocal() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -72,7 +69,6 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
-  /// 📥 Load from SharedPreferences (Local)
   Future<void> loadFromLocal() async {
     try {
       final prefs = await SharedPreferences.getInstance();

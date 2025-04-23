@@ -4,7 +4,8 @@ class Workout {
   final String imageUrl;
   final String mota;
   final String time;
-  final String level;
+  final String level; // độ khó
+  final String muscleGroup; // nhóm cơ
 
   Workout({
     required this.id,
@@ -13,6 +14,7 @@ class Workout {
     required this.mota,
     required this.time,
     required this.level,
+    required this.muscleGroup,
   });
 
   factory Workout.fromMap(Map<String, dynamic> map, String id) {
@@ -23,6 +25,7 @@ class Workout {
       mota: map['mo_ta'] ?? '',
       time: map['time'] ?? '',
       level: map['level'] ?? '',
+      muscleGroup: map['muscle_group'] ?? '', // <-- thêm dòng này
     );
   }
 
@@ -32,7 +35,8 @@ class Workout {
       'imageUrl': imageUrl,
       'mo_ta': mota,
       'time': time,
-      'level': level, // <- đúng giá trị biến level
+      'level': level,
+      'muscle_group': muscleGroup, // <-- thêm dòng này
     };
   }
 }
