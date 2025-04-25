@@ -12,8 +12,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Khởi tạo thông báo local
-
   runApp(const MyApp());
 }
 

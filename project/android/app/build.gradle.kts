@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.example.project"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -50,4 +50,5 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }
