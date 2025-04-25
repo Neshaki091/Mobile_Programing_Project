@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
+
 class Message {
+  @required
   final String text;
   final String userId;
   final int timestamp;

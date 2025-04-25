@@ -204,7 +204,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 enabled: false,
               ),
               SizedBox(height: 20),
-              ElevatedButton(onPressed: _saveProfile, child: Text("Lưu")),
+              ElevatedButton(onPressed: () { 
+                _saveProfile();
+                Navigator.pop(context); 
+              }, child: Text("Lưu")),
             ],
           ),
         ),
