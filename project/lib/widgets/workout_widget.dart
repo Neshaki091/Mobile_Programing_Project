@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:project/presentation/exercises/exercise_detail_screen.dart';
-
 import '../data/models/workout_model.dart';
 
 class ExerciseItemWidget extends StatelessWidget {
   final Workout workout;
-  final VoidCallback?
-  onAddToMyWorkouts; // Callback để thêm bài tập vào "Bài tập của tôi"
-  final VoidCallback?
-  onRemoveFromMyWorkouts; // Callback để xóa bài tập khỏi "Bài tập của tôi"
+  final VoidCallback? onAddToMyWorkouts;
+  final VoidCallback? onRemoveFromMyWorkouts;
 
   const ExerciseItemWidget({
     Key? key,
@@ -39,61 +36,61 @@ class ExerciseItemWidget extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ExerciseDetailScreen(workout: this.workout),
+              builder: (context) => ExerciseDetailScreen(workout: workout),
             ),
           );
         },
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  workout.imageUrl,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                workout.imageUrl,
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
               ),
-              // Cột bên trái: Tên bài tập và mức độ
-              Column(
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     workout.name,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    textAlign: TextAlign.start,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   Row(
                     children: [
-                      Icon(Icons.whatshot, size: 16, color: Colors.red),
-                      SizedBox(width: 4),
+                      const Icon(Icons.whatshot, size: 16, color: Colors.red),
+                      const SizedBox(width: 4),
                       Text(
                         workout.level,
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
                       ),
                     ],
                   ),
                 ],
               ),
-              // Ảnh bài tập bên phải
-
-              // Nút "Thêm" (nếu có)
-              if (onAddToMyWorkouts != null)
-                IconButton(
-                  icon: Icon(Icons.add, color: Colors.blue),
-                  onPressed: onAddToMyWorkouts,
-                ),
-              // Nút "Xóa" (nếu có)
-              if (onRemoveFromMyWorkouts != null)
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: onRemoveFromMyWorkouts,
-                ),
-            ],
-          ),
+            ),
+            if (onAddToMyWorkouts != null)
+              IconButton(
+                icon: const Icon(Icons.add, color: Colors.blue),
+                onPressed: onAddToMyWorkouts,
+              ),
+            if (onRemoveFromMyWorkouts != null)
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: onRemoveFromMyWorkouts,
+              ),
+          ],
         ),
       ),
     );
@@ -102,23 +99,25 @@ class ExerciseItemWidget extends StatelessWidget {
 
 class WorkoutItemWidget extends StatelessWidget {
   final Workout workout;
-  final VoidCallback?
-  onAddToMyWorkouts; // Callback để thêm bài tập vào "Bài tập của tôi"
-  final VoidCallback?
-  onRemoveFromMyWorkouts; // Callback để xóa bài tập khỏi "Bài tập của tôi"
+  final VoidCallback? onAddToMyWorkouts;
+  final VoidCallback? onAddToFavorites;
+  final VoidCallback? onRemoveFromFavorites;
+  final bool isFavorite; // Thêm thuộc tính isFavorite để đổi icon
 
   const WorkoutItemWidget({
     Key? key,
     required this.workout,
     this.onAddToMyWorkouts,
-    this.onRemoveFromMyWorkouts,
+    this.onAddToFavorites,
+    this.onRemoveFromFavorites,
+    this.isFavorite = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-
+      width: 160, // Nhỏ gọn để kéo ngang
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -127,21 +126,59 @@ class WorkoutItemWidget extends StatelessWidget {
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          workout.imageUrl,
-          width: 80,
-          height: 80,
-          fit: BoxFit.cover,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(12),
+                ),
+                child: Image.network(
+                  workout.imageUrl,
+                  height: 100,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned(
+                right: 8,
+                top: 8,
+                child: IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.red : Colors.grey,
+                  ),
+                  onPressed: () {
+                    if (isFavorite) {
+                      onRemoveFromFavorites?.call();
+                    } else {
+                      onAddToFavorites?.call();
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              workout.name,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          if (onAddToMyWorkouts != null)
+            TextButton(
+              onPressed: onAddToMyWorkouts,
+              child: const Text('Thêm vào của tôi'),
+            ),
+        ],
       ),
-
-      // Cột bên trái: Tên bài tập và mức độ
     );
   }
 }

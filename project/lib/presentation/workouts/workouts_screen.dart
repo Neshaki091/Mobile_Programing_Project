@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/workout_provider.dart';
-import '../../widgets/workout_widget.dart'; // Ensure this import exists
+import '../../widgets/workout_widget.dart';
 import '../../widgets/appBar_widget.dart';
 import '../../routes/app_routes.dart';
 
@@ -17,6 +17,21 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   late TabController _tabController;
   int currentIndex = 2;
 
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+
+    _tabController.addListener(() {
+      if (_tabController.index == 1) {
+        Provider.of<WorkoutProvider>(context, listen: false).loadFavorites();
+      }
+    });
+
+    Provider.of<WorkoutProvider>(context, listen: false).loadWorkouts();
+    Provider.of<WorkoutProvider>(context, listen: false).loadMyWorkouts();
+  }
+
   void onTap(int index) {
     setState(() => currentIndex = index);
 
@@ -30,27 +45,15 @@ class _WorkoutScreenState extends State<WorkoutScreen>
       case 2:
         break;
       case 3:
+        Navigator.pushNamed(context, AppRoutes.journey);
         break;
       case 4:
         Navigator.pushNamed(context, AppRoutes.community);
         break;
+      case 5:
+        Navigator.pushNamed(context, AppRoutes.profile);
+        break;
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-
-    // Lắng nghe sự thay đổi của tab để cập nhật currentIndex
-    _tabController.addListener(() {
-      setState(() {
-        currentIndex = _tabController.index;
-      });
-    });
-
-    Provider.of<WorkoutProvider>(context, listen: false).loadWorkouts();
-    Provider.of<WorkoutProvider>(context, listen: false).loadMyWorkouts();
   }
 
   @override
@@ -64,6 +67,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
     final workoutProvider = Provider.of<WorkoutProvider>(context);
     final workouts = workoutProvider.workouts;
     final myWorkouts = workoutProvider.myWorkouts;
+    final favoriteWorkouts = workoutProvider.favoriteWorkouts;
 
     return Scaffold(
       appBar: AppBar(
@@ -83,6 +87,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
               : TabBarView(
                 controller: _tabController,
                 children: [
+                  // Tab 1: Tất cả bài tập
                   SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,28 +100,28 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                         buildWorkoutGroup('Vai', workouts, workoutProvider),
                       ],
                     ),
-                  ), // Tab Tất cả bài tập
-                  // Tab Bài tập yêu thích
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children:
-                          workouts.map((workout) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: WorkoutItemWidget(workout: workout),
-                            );
-                          }).toList(),
-                    ),
                   ),
-                  // Tab Bài tập của tôi
+                  // Tab 2: Bài tập yêu thích
+                  ListView.builder(
+                    itemCount: favoriteWorkouts.length,
+                    itemBuilder: (context, index) {
+                      return ExerciseItemWidget(
+                        workout: favoriteWorkouts[index],
+                        onRemoveFromMyWorkouts: () {
+                          workoutProvider.removeFromFavoriteWorkouts(
+                            favoriteWorkouts[index],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  // Tab 3: Bài tập của tôi
                   ListView.builder(
                     itemCount: myWorkouts.length,
                     itemBuilder: (context, index) {
                       return ExerciseItemWidget(
                         workout: myWorkouts[index],
                         onRemoveFromMyWorkouts: () {
-                          // Xóa bài tập khỏi "Bài tập của tôi"
                           workoutProvider.removeFromMyWorkouts(
                             myWorkouts[index],
                           );
@@ -126,14 +131,12 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                   ),
                 ],
               ),
-
       bottomNavigationBar: BottomNavBar(
         currentIndex: currentIndex,
         onTap: onTap,
       ),
       floatingActionButton:
-          _tabController.index ==
-                  2 // Chỉ hiển thị khi ở Tab "Bài tập của tôi"
+          _tabController.index == 2
               ? FloatingActionButton(
                 onPressed: () {
                   _showAddWorkoutDialog(workoutProvider);
@@ -141,9 +144,8 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                 child: const Icon(Icons.add),
                 tooltip: 'Thêm bài tập',
               )
-              : null, // Nếu không phải tab "Bài tập của tôi", không hiển thị FAB
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerFloat, // Nút ở dưới bên trái
+              : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -164,7 +166,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                   title: Text(workout.name),
                   onTap: () {
                     workoutProvider.addToMyWorkouts(workout);
-                    Navigator.pop(context); // Đóng dialog sau khi chọn
+                    Navigator.pop(context);
                   },
                 );
               },
@@ -188,7 +190,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
             )
             .toList();
 
-    if (groupWorkouts.isEmpty) return SizedBox();
+    if (groupWorkouts.isEmpty) return const SizedBox();
 
     return Container(
       child: Column(
@@ -213,6 +215,13 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                         onAddToMyWorkouts: () {
                           workoutProvider.addToMyWorkouts(workout);
                         },
+                        onAddToFavorites: () {
+                          workoutProvider.addToFavoriteWorkouts(workout);
+                        },
+                        onRemoveFromFavorites: () {
+                          workoutProvider.removeFromFavoriteWorkouts(workout);
+                        },
+                        isFavorite: workoutProvider.isFavorite(workout),
                       ),
                     );
                   }).toList(),

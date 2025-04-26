@@ -48,9 +48,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
         Navigator.pushNamed(context, AppRoutes.workout);
         break;
       case 3:
+        Navigator.pushNamed(context, AppRoutes.journey);
         break;
       case 4:
         break;
+      case 5:
+        Navigator.pushNamed(context, AppRoutes.profile);
     }
   }
 

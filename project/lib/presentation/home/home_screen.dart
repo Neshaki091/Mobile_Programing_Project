@@ -81,10 +81,13 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.pushNamed(context, AppRoutes.workout);
         break;
       case 3:
+        Navigator.pushNamed(context, AppRoutes.journey);
         break;
       case 4:
         Navigator.pushNamed(context, AppRoutes.community);
         break;
+      case 5:
+        Navigator.pushNamed(context, AppRoutes.profile);
     }
   }
 

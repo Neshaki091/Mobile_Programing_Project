@@ -1,4 +1,3 @@
-// Import Firestore package for DocumentSnapshot
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserProfile {
@@ -8,10 +7,11 @@ class UserProfile {
   final double height;
   final double weight;
   final String avatarUrl;
+  final int? age;
+  final bool isMale;
   final List<String> friends;
-  final List<String> favorites; // Danh sách ID bài tập yêu thích
-  final List<String> myWorkouts; // URL của ảnh đại diện
-  // Lịch tập
+  final List<String> favorites;
+  final List<String> myWorkouts;
 
   UserProfile({
     required this.uid,
@@ -20,9 +20,11 @@ class UserProfile {
     required this.height,
     required this.weight,
     this.avatarUrl = '',
+    this.age,
+    this.isMale = true,
     required this.favorites,
     required this.myWorkouts,
-    required this.friends, // Khởi tạo avatarUrl với giá trị mặc định
+    required this.friends,
   });
 
   factory UserProfile.fromMap(Map<String, dynamic> map) {
@@ -32,34 +34,45 @@ class UserProfile {
       name: map['name'] ?? '',
       height: (map['height'] ?? 0).toDouble(),
       weight: (map['weight'] ?? 0).toDouble(),
+      avatarUrl: map['avatarUrl'] ?? '',
+      age: map['age'],
+      isMale: map['isMale'] ?? true,
       favorites: List<String>.from(map['favorites'] ?? []),
       myWorkouts: List<String>.from(map['myWorkouts'] ?? []),
-      friends: List<String>.from(
-        map['friend'] ?? [],
-      ), // Lấy URL ảnh đại diện từ map
+      friends: List<String>.from(map['friends'] ?? []),
     );
   }
+
   factory UserProfile.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return UserProfile(
       uid: data['uid'] ?? '',
-      name: data['name'] ?? '',
       email: data['email'] ?? '',
-      avatarUrl: data['avatarUrl'] ?? '', // Có thể là null nếu không có URL ảnh đại diện
+      name: data['name'] ?? '',
       height: (data['height'] ?? 0).toDouble(),
       weight: (data['weight'] ?? 0).toDouble(),
+      avatarUrl: data['avatarUrl'] ?? '',
+      age: data['age'],
+      isMale: data['isMale'] ?? true,
       favorites: List<String>.from(data['favorites'] ?? []),
       myWorkouts: List<String>.from(data['myWorkouts'] ?? []),
       friends: List<String>.from(data['friends'] ?? []),
     );
   }
+
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
       'email': email,
       'name': name,
       'height': height,
-      'weight': weight, // Lưu URL ảnh đại diện vào map
+      'weight': weight,
+      'avatarUrl': avatarUrl,
+      'age': age,
+      'isMale': isMale,
+      'favorites': favorites,
+      'myWorkouts': myWorkouts,
+      'friends': friends,
     };
   }
 }

@@ -18,6 +18,7 @@ import '../presentation/nutrition/nutrition_detail_screen.dart';
 import '../data/models/nutrition_model.dart';
 import '../data/models/user_model.dart';
 import '../presentation/exercises/exercise_detail_screen.dart';
+import '../presentation/journey/journey_screen.dart';
 
 class AppRoutes {
   static const String splash = '/splash';
@@ -35,7 +36,7 @@ class AppRoutes {
   static const String exercise = 'exercise';
   static const String editProfile = '/editProfile';
   static const String exerciseDetail = '/exerciseDetail';
-
+  static const String journey = '/journey';
   static final Map<String, WidgetBuilder> _routes = {
     splash: (_) => SplashScreen(),
     login: (_) => LoginScreen(),
@@ -56,6 +57,14 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => NutritionDetailScreen(nutritionModel: nutritionModel),
         );
+      case journey:
+        // Kiểm tra và truyền route mà không cần truyền authRepo qua arguments
+        if (settings.name == journey) {
+          return MaterialPageRoute(
+            builder: (_) => JourneyScreen(authRepo: AuthRepository()),
+          );
+        } // Không cần truyền authRepo ở đây
+
       case exerciseDetail:
         if (settings.arguments != null && settings.arguments is Workout) {
           final workout = settings.arguments as Workout;
@@ -66,13 +75,10 @@ class AppRoutes {
           return _buildErrorRoute('Workout data is missing or invalid');
         }
       case profile:
-        final authRepo = settings.arguments as AuthRepository?;
-        if (authRepo != null) {
+        if (settings.name == profile) {
           return MaterialPageRoute(
-            builder: (_) => ProfileScreen(authRepo: authRepo),
+            builder: (_) => ProfileScreen(authRepo: AuthRepository()),
           );
-        } else {
-          return _buildErrorRoute('AuthRepository is missing');
         }
 
       case chat:

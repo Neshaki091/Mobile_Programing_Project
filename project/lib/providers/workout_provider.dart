@@ -5,9 +5,9 @@ import '../data/repositories/workout_repository.dart';
 class WorkoutProvider with ChangeNotifier {
   final WorkoutRepository _repository = WorkoutRepository();
 
-  List<Workout> _workouts = [];
-  List<Workout> _favoriteWorkouts = [];
-  List<Workout> _myWorkouts = [];
+  List<Workout> _workouts = []; // tất cả bài tập
+  List<Workout> _favoriteWorkouts = []; // bài tập yêu thích
+  List<Workout> _myWorkouts = []; // bài tập của tôi
 
   List<Workout> get workouts => _workouts;
   List<Workout> get favoriteWorkouts => _favoriteWorkouts;
@@ -15,8 +15,12 @@ class WorkoutProvider with ChangeNotifier {
 
   // Load tất cả bài tập
   Future<void> loadWorkouts() async {
-    _workouts = await _repository.fetchWorkouts();
-    notifyListeners();
+    try {
+      _workouts = await _repository.fetchWorkouts();
+      notifyListeners();
+    } catch (e) {
+      print("Lỗi khi loadWorkouts: $e");
+    }
   }
 
   // Load bài tập cá nhân từ Firestore
@@ -27,6 +31,31 @@ class WorkoutProvider with ChangeNotifier {
     } catch (e) {
       print("Lỗi khi loadMyWorkouts: $e");
     }
+  }
+
+  // Load bài tập yêu thích
+  Future<void> loadFavorites() async {
+    try {
+      _favoriteWorkouts = await _repository.fetchFavorites();
+      notifyListeners();
+    } catch (e) {
+      print("Lỗi khi loadFavorites: $e");
+    }
+  }
+
+  // Thêm bài tập vào yêu thích
+  Future<void> addToFavoriteWorkouts(Workout workout) async {
+    if (_favoriteWorkouts.any((w) => w.name == workout.name)) return;
+    await _repository.addToFavoriteWorkouts(workout);
+    _favoriteWorkouts.add(workout);
+    notifyListeners();
+  }
+
+  // Xóa bài tập khỏi yêu thích
+  Future<void> removeFromFavoriteWorkouts(Workout workout) async {
+    await _repository.removeFromFavoriteWorkouts(workout.name);
+    _favoriteWorkouts.removeWhere((w) => w.name == workout.name);
+    notifyListeners();
   }
 
   // Thêm bài tập vào danh sách của tôi
@@ -42,5 +71,9 @@ class WorkoutProvider with ChangeNotifier {
     await _repository.removeFromMyWorkouts(workout.name);
     _myWorkouts.removeWhere((w) => w.name == workout.name);
     notifyListeners();
+  }
+
+  bool isFavorite(Workout workout) {
+    return _favoriteWorkouts.any((w) => w.id == workout.id);
   }
 }

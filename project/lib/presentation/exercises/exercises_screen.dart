@@ -30,20 +30,24 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
   void onTap(int index) {
     setState(() => currentIndex = index);
+
     switch (index) {
-      case 0:
-        Navigator.pushNamed(context, AppRoutes.home);
+      case 0:Navigator.pushNamed(context, AppRoutes.home);
         break;
       case 1:
+        
         break;
       case 2:
         Navigator.pushNamed(context, AppRoutes.workout);
         break;
       case 3:
+        Navigator.pushNamed(context, AppRoutes.journey);
         break;
       case 4:
         Navigator.pushNamed(context, AppRoutes.community);
         break;
+      case 5:
+        Navigator.pushNamed(context, AppRoutes.profile);
     }
   }
 

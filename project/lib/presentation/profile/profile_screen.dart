@@ -1,173 +1,298 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../providers/authentic_provider.dart';
-import 'package:project/data/models/user_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../data/repositories/auth_repository.dart';
-import '../../routes/app_routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:project/data/repositories/auth_repository.dart';
+import 'package:project/presentation/exercises/exercise_detail_screen.dart';
+import 'package:project/presentation/profile/EditProfileScreen.dart';
+import 'package:project/presentation/profile/feedback_screen.dart';
+import 'package:project/presentation/profile/support_screen.dart';
+import 'package:project/widgets/appBar_widget.dart';
+import 'package:project/widgets/journey_provider.dart';
+
+import '../../routes/app_routes.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final AuthRepository authRepo;
+  final AuthRepository authRepo; // Thêm authRepo
 
-  const ProfileScreen({Key? key, required this.authRepo}) : super(key: key);
+  ProfileScreen({Key? key, required this.authRepo}) : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final _nameController = TextEditingController();
-  final _weightController = TextEditingController();
-  final _heightController = TextEditingController();
+  int currentIndex = 0;
+  bool _isLoading = true; // Biến theo dõi trạng thái loading
 
-  bool _isLoading = true;
-  late String avatarUrl;
+  // Biến lưu thông tin người dùng
+  String _name = 'Đang tải...';
+  String _email = 'Đang tải...';
+  String _photoUrl = '';
+  double _weight = 0;
+  double _height = 0;
+  int? _age;
+  bool _isMale = true; // Thêm biến giới tính
 
   @override
   void initState() {
     super.initState();
-    _loadUserProfile();
+    _loadUserData(); // Gọi hàm tải dữ liệu khi khởi tạo màn hình
   }
 
-  Future<void> _loadUserProfile() async {
-    final uid = widget.authRepo.currentUser?.uid;
-    if (uid == null) return;
-
-    final profile = await widget.authRepo.getUserProfile(uid);
-    if (profile != null) {
-      _nameController.text = profile.name;
-      _weightController.text = profile.weight.toString();
-      _heightController.text = profile.height.toString();
-      avatarUrl =
-          widget.authRepo.currentUser?.photoURL ??
-          ''; // Lấy URL ảnh từ Firebase Auth
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('name', profile.name);
-      await prefs.setDouble('weight', profile.weight);
-      await prefs.setDouble('height', profile.height);
-      await prefs.setString('email', profile.email);
-      await prefs.setString(
-        'avatarUrl',
-        avatarUrl,
-      ); // Lưu avatarUrl vào SharedPreferences
-    }
-
+  // Hàm tải dữ liệu người dùng
+  Future<void> _loadUserData() async {
     setState(() {
-      _isLoading = false;
+      _isLoading = true; // Bắt đầu loading
     });
+
+    try {
+      final uid = widget.authRepo.currentUser?.uid;
+      if (uid == null) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Lấy dữ liệu từ Firestore
+      final profile = await widget.authRepo.getUserProfile(uid);
+
+      // Cập nhật state với dữ liệu từ profile
+      setState(() {
+        if (profile != null) {
+          _name = profile.name;
+          _email = profile.email;
+          _weight = profile.weight;
+          _height = profile.height;
+          _age = profile.age;
+          _isMale = profile.isMale; // Cập nhật giới tính
+        }
+
+        // Lấy photoURL từ Firebase Auth
+        _photoUrl = widget.authRepo.currentUser?.photoURL ?? '';
+
+        _isLoading = false; // Kết thúc loading
+      });
+    } catch (e) {
+      print('Error loading user data: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
-  Future<void> _saveProfile() async {
-    final uid = widget.authRepo.currentUser?.uid;
-    if (uid == null) return;
+  @override
+  void onTap(int index) {
+    setState(() => currentIndex = index);
 
-    final profile = UserProfile(
-      uid: uid,
-      name: _nameController.text,
-      email: widget.authRepo.currentUser?.email ?? '',
-      weight: double.tryParse(_weightController.text) ?? 0,
-      height:
-          double.tryParse(_heightController.text) ??
-          0, // Giữ avatarUrl cũ từ Firebase Auth
-      favorites: List<String>.empty(), // Danh sách bài tập yêu thích trống
-      myWorkouts: List<String>.empty(),
-      friends: List<String>.empty(),
-    );
-
-    await widget.authRepo.updateUserProfile(profile);
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('name', profile.name);
-    await prefs.setDouble('weight', profile.weight);
-    await prefs.setDouble('height', profile.height);
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text("Thông tin đã được lưu!")));
+    switch (index) {
+      case 0:
+        Navigator.pushNamed(context, AppRoutes.home);
+        break;
+      case 1:
+        Navigator.pushNamed(context, AppRoutes.exercise);
+        break;
+      case 2:
+        Navigator.pushNamed(context, AppRoutes.workout);
+        break;
+      case 3:
+        Navigator.pushNamed(context, AppRoutes.journey);
+        break;
+      case 4:
+        Navigator.pushNamed(context, AppRoutes.community);
+        break;
+      case 5:
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthenticProvider>(context);
-    final user = authProvider.user;
-
-    if (_isLoading) return Center(child: CircularProgressIndicator());
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hồ sơ người dùng', style: TextStyle(color: Colors.blue)),
+        title: Text('Thông tin cá nhân'),
+        centerTitle: true,
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout, color: Colors.blue),
-            onPressed:
-                () => Navigator.pushReplacementNamed(context, AppRoutes.home),
-          ),
-        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                child:
-                    user?.photoURL != null && user?.photoURL!.isNotEmpty == true
-                        ? Container(
-                          decoration: BoxDecoration(shape: BoxShape.circle),
-                          child: ClipOval(
-                            child: Image.network(
-                              user!.photoURL!,
-                              width: 70.w,
-                              height: 70.h,
-                              fit: BoxFit.cover,
+      body:
+          _isLoading
+              ? Center(child: CircularProgressIndicator()) // Hiển thị loading
+              : SingleChildScrollView(
+                padding: EdgeInsets.all(16.r),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 50.r,
+                            backgroundImage:
+                                _photoUrl.isNotEmpty
+                                    ? NetworkImage(_photoUrl)
+                                    : AssetImage(
+                                          'assets/images/profile_placeholder.png',
+                                        )
+                                        as ImageProvider,
+                          ),
+                          SizedBox(width: 16.w),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _name, // Sử dụng dữ liệu động
+                                  style: TextStyle(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  "@$_email", // Sử dụng dữ liệu động
+                                  style: TextStyle(fontSize: 14.sp),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: 8.h),
+                                InfoCard(
+                                  icon: Icons.flag_outlined,
+                                  text: 'tăng cơ',
+                                ),
+                              ],
                             ),
                           ),
-                        )
-                        : Container(
-                          decoration: BoxDecoration(shape: BoxShape.circle),
-                          child: ClipOval(
-                            child: Image.asset(
-                              "assets/images/default-avatar.png",
-                              width: 70.w,
-                              height: 70.h,
-                              fit: BoxFit.cover,
-                            ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                    Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment
+                              .spaceBetween, // Cải thiện cách phân bố không gian
+                      children: [
+                        Expanded(
+                          child: InfoCard(
+                            icon: Icons.monitor_weight_outlined,
+                            text:
+                                '${_weight.toStringAsFixed(1)} kg', // Format để hiển thị gọn hơn
                           ),
                         ),
-              ),
+                        SizedBox(width: 8.w), // Giảm width từ 10 xuống 8
+                        Expanded(
+                          child: InfoCard(
+                            icon: Icons.boy,
+                            text:
+                                '${_height.toStringAsFixed(0)} cm', // Format để hiển thị gọn hơn
+                          ),
+                        ),
+                        SizedBox(width: 8.w), // Giảm width từ 10 xuống 8
+                        Expanded(
+                          child: InfoCard(
+                            icon: _isMale ? Icons.male : Icons.female,
+                            text:
+                                _age != null
+                                    ? '$_age tuổi'
+                                    : 'N/A', // Rút gọn "tuổi" thành "t" nếu cần
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
+                    Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Cài đặt',
+                            style: TextStyle(
+                              fontSize: 22.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8.h),
+                          SettingsTile(
+                            icon: Icons.edit,
+                            title: 'Chỉnh sửa thông tin',
+                            onTap: () async {
+                              // Thêm async để có thể await
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => EditProfileScreen(
+                                        authRepo: widget.authRepo,
+                                      ),
+                                ),
+                              );
 
-              // Hiển thị ảnh đại diện
-              SizedBox(height: 20),
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Họ tên'),
-                cursorColor: Colors.blue,
-              ),
-              TextField(
-                controller: _weightController,
-                decoration: InputDecoration(labelText: 'Cân nặng (kg)'),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: _heightController,
-                decoration: InputDecoration(labelText: 'Chiều cao (cm)'),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: TextEditingController(
-                  text: widget.authRepo.currentUser?.email,
+                              // Sau khi quay lại từ trang EditProfileScreen, tải lại dữ liệu
+                              _loadUserData();
+                            },
+                          ),
+                          SizedBox(height: 16.h),
+                          SettingsTile(
+                            icon: Icons.person_outline,
+                            title: 'Cài đặt tài khoản',
+                            onTap: () {},
+                          ),
+                          SizedBox(height: 16.h),
+                          SettingsTile(
+                            icon: Icons.settings,
+                            title: 'Cài đặt ứng dụng',
+                            onTap: () {},
+                          ),
+                          SizedBox(height: 16.h),
+                          SettingsTile(
+                            icon: Icons.feedback_outlined,
+                            title: 'Nhận xét',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FeedbackScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 16.h),
+                          SettingsTile(
+                            icon: Icons.help_outline,
+                            title: 'Hỗ trợ',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SupportScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 16.h),
+                          SettingsTile(
+                            icon: Icons.logout,
+                            title: 'Đăng xuất',
+                            onTap: () async {
+                              await widget.authRepo.signOut();
+                              Navigator.pushReplacementNamed(
+                                context,
+                                AppRoutes.login,
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Đăng xuất thành công!'),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                decoration: InputDecoration(labelText: 'Email'),
-                enabled: false,
               ),
-              SizedBox(height: 20),
-              ElevatedButton(onPressed: _saveProfile, child: Text("Lưu")),
-            ],
-          ),
-        ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: currentIndex,
+        onTap: onTap,
       ),
     );
   }
