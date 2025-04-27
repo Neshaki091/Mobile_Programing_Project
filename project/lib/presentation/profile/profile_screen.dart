@@ -92,8 +92,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Navigator.pushNamed(context, AppRoutes.home);
         break;
       case 1:
+        Navigator.pushNamed(context, AppRoutes.exercise);
         break;
       case 2:
+        Navigator.pushNamed(context, AppRoutes.workout);
         break;
       case 3:
         Navigator.pushNamed(context, AppRoutes.journey);
@@ -102,7 +104,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Navigator.pushNamed(context, AppRoutes.community);
         break;
       case 5:
-        Navigator.pushNamed(context, AppRoutes.profile);
         break;
     }
   }

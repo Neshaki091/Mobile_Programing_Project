@@ -45,7 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         listen: false,
       ).register(_emailController.text, _passwordController.text);
       // Sau khi đăng ký thành công, điều hướng người dùng
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/login');
     } catch (error) {
       // Hiển thị thông báo lỗi nếu có lỗi xảy ra
       ScaffoldMessenger.of(context).showSnackBar(
@@ -58,7 +58,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  void _googleLogin() {
-    // Thêm logic đăng nhập bằng Google ở đây
+  void _googleLogin() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      // Đăng ký người dùng bằng email và mật khẩu
+      await Provider.of<AuthenticProvider>(
+        context,
+        listen: false,
+      ).loginWithGoogle();
+      // Sau khi đăng ký thành công, điều hướng người dùng
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (error) {
+      // Hiển thị thông báo lỗi nếu có lỗi xảy ra
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng ký thất bại. Vui lòng thử lại.')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }

@@ -6,10 +6,11 @@ import 'package:project/presentation/profile/EditProfileScreen.dart';
 import 'package:project/presentation/journey/body_screen.dart';
 import '../../widgets/appBar_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../routes/app_routes.dart';
 
 class JourneyScreen extends StatefulWidget {
   final AuthRepository authRepo;
-  
+
   const JourneyScreen({Key? key, required this.authRepo}) : super(key: key);
 
   @override
@@ -20,7 +21,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
   double bmi = 0;
   bool _isLoading = true;
   UserProfile? _profile;
-
+  int currentIndex = 3;
   // Thêm biến để lưu danh sách số đo cơ thể
   List<BodyMeasurement> bodyMeasurements = [];
 
@@ -29,6 +30,29 @@ class _JourneyScreenState extends State<JourneyScreen> {
     super.initState();
     _loadUserProfile();
     _loadBodyMeasurements();
+  }
+
+  void onTap(int index) {
+    setState(() => currentIndex = index);
+
+    switch (index) {
+      case 0:
+        Navigator.pushNamed(context, AppRoutes.home);
+        break;
+      case 1:
+        Navigator.pushNamed(context, AppRoutes.exercise);
+        break;
+      case 2:
+        Navigator.pushNamed(context, AppRoutes.workout);
+        break;
+      case 3:
+        break;
+      case 4:
+        Navigator.pushNamed(context, AppRoutes.community);
+        break;
+      case 5:
+        Navigator.pushNamed(context, AppRoutes.profile);
+    }
   }
 
   Future<void> _loadUserProfile() async {
@@ -64,24 +88,24 @@ class _JourneyScreenState extends State<JourneyScreen> {
 
   Future<void> _loadBodyMeasurements() async {
     if (widget.authRepo.currentUser == null) return;
-    
+
     final uid = widget.authRepo.currentUser!.uid;
     print('Đang tìm số đo cho uid: $uid');
-    
+
     try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('bodyMeasurements')
-          .get();
-      
+      final snapshot =
+          await FirebaseFirestore.instance.collection('bodyMeasurements').get();
+
       print('Tổng số bản ghi: ${snapshot.docs.length}');
-      
-      final filteredDocs = snapshot.docs.where((doc) {
-        final data = doc.data();
-        return data['userId'] == uid || data['uid'] == uid;
-      }).toList();
-      
+
+      final filteredDocs =
+          snapshot.docs.where((doc) {
+            final data = doc.data();
+            return data['userId'] == uid || data['uid'] == uid;
+          }).toList();
+
       print('Số bản ghi sau khi lọc: ${filteredDocs.length}');
-      
+
       if (filteredDocs.isNotEmpty) {
         filteredDocs.sort((a, b) {
           final aTime = a.data()['createdAt'];
@@ -91,12 +115,13 @@ class _JourneyScreenState extends State<JourneyScreen> {
           }
           return 0;
         });
-        
+
         setState(() {
           // Thay đổi chỗ này để sử dụng model BodyMeasurement
-          bodyMeasurements = filteredDocs.map((doc) => 
-            BodyMeasurement.fromMap(doc.data(), id: doc.id)
-          ).toList();
+          bodyMeasurements =
+              filteredDocs
+                  .map((doc) => BodyMeasurement.fromMap(doc.data(), id: doc.id))
+                  .toList();
         });
       }
     } catch (e) {
@@ -112,32 +137,36 @@ class _JourneyScreenState extends State<JourneyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
-    final iconColor = isDarkMode ? Colors.white : Colors.black;
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Training journey', style: TextStyle(color: iconColor, fontWeight: FontWeight.bold)),
+        title: Text(
+          'Training journey',
+          style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _profile == null
-              ? Center(child: Text('Không có dữ liệu!', style: TextStyle(color: textColor)))
+      body:
+          _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : _profile == null
+              ? Center(child: Text('Không có dữ liệu!'))
               : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      _buildBMICard(context),
-                      SizedBox(height: 20),
-                      _buildBodyMeasurementsCard(context),
-                    ],
-                  ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    _buildBMICard(context),
+                    SizedBox(height: 20),
+                    _buildBodyMeasurementsCard(context),
+                  ],
                 ),
-                
+              ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: currentIndex,
+        onTap: onTap,
+      ),
     );
   }
 
@@ -155,27 +184,35 @@ class _JourneyScreenState extends State<JourneyScreen> {
         child: Column(
           children: [
             Row(
-                children: [
+              children: [
                 Icon(Icons.favorite, color: Colors.red),
                 SizedBox(width: 8),
                 Text("Chỉ số BMI của bạn: ", style: TextStyle(fontSize: 16)),
                 Text(
                   bmi.toStringAsFixed(1),
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
                 ),
                 Spacer(),
                 GestureDetector(
                   onTap: () async {
-                    await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => EditProfileScreen(
-                        authRepo: widget.authRepo,
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                EditProfileScreen(authRepo: widget.authRepo),
                       ),
-                    ));
+                    );
                     _loadUserProfile();
                   },
                   child: Text(
-                  "Chỉnh sửa", 
-                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                    "Chỉnh sửa",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -189,7 +226,13 @@ class _JourneyScreenState extends State<JourneyScreen> {
                 color: _bmiColor(),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(_bmiStatus(), style: TextStyle(color: Colors.green[800], fontWeight: FontWeight.bold)),
+              child: Text(
+                _bmiStatus(),
+                style: TextStyle(
+                  color: Colors.green[800],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             SizedBox(height: 16),
             Row(
@@ -263,7 +306,10 @@ class _JourneyScreenState extends State<JourneyScreen> {
   Widget _infoColumn(String value, String label) {
     return Column(
       children: [
-        Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(
+          value,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         SizedBox(height: 4),
         Text(label, style: TextStyle(color: Colors.grey)),
       ],
@@ -282,7 +328,10 @@ class _JourneyScreenState extends State<JourneyScreen> {
               children: [
                 Icon(Icons.straighten_outlined),
                 SizedBox(width: 8),
-                Text("Số đo cơ thể", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(
+                  "Số đo cơ thể",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
                 Spacer(),
                 GestureDetector(
                   onTap: () async {
@@ -290,16 +339,19 @@ class _JourneyScreenState extends State<JourneyScreen> {
                     final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BodyMeasurementScreen(
-                          authRepo: widget.authRepo,
-                          profile: _profile,
-                        ),
+                        builder:
+                            (context) => BodyMeasurementScreen(
+                              authRepo: widget.authRepo,
+                              profile: _profile,
+                            ),
                       ),
                     );
-                    
+
                     // Nếu có kết quả trả về (đã lưu thành công), tải lại dữ liệu
                     if (result == true) {
-                      print('Nhận tín hiệu đã lưu thành công, đang tải lại dữ liệu...');
+                      print(
+                        'Nhận tín hiệu đã lưu thành công, đang tải lại dữ liệu...',
+                      );
                       await _loadBodyMeasurements();
                       // Đợi để đảm bảo đã tải xong dữ liệu
                       setState(() {}); // Cập nhật UI
@@ -308,8 +360,11 @@ class _JourneyScreenState extends State<JourneyScreen> {
                   child: Row(
                     children: [
                       Text(
-                        "Chỉnh sửa", 
-                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                        "Chỉnh sửa",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       SizedBox(width: 4),
                       Icon(Icons.edit, color: Colors.grey, size: 16),
@@ -320,28 +375,38 @@ class _JourneyScreenState extends State<JourneyScreen> {
             ),
             SizedBox(height: 16),
             bodyMeasurements.isEmpty
-                ? Text("Chưa có số đo cơ thể nào", 
-                    style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey))
-                : Column(
-                    children: bodyMeasurements.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final measurement = entry.value;
-                      return _buildBodyMeasurementTile(
-                        "${index + 1}. Số đo cơ thể của tôi",
-                        measurement.date,
-                        measurement,
-                      );
-                    }).toList(),
+                ? Text(
+                  "Chưa có số đo cơ thể nào",
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey,
                   ),
+                )
+                : Column(
+                  children:
+                      bodyMeasurements.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final measurement = entry.value;
+                        return _buildBodyMeasurementTile(
+                          "${index + 1}. Số đo cơ thể của tôi",
+                          measurement.date,
+                          measurement,
+                        );
+                      }).toList(),
+                ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBodyMeasurementTile(String title, String date, BodyMeasurement measurement) {
+  Widget _buildBodyMeasurementTile(
+    String title,
+    String date,
+    BodyMeasurement measurement,
+  ) {
     print('Hiển thị số đo: ${measurement.toMap()}');
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -356,10 +421,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
