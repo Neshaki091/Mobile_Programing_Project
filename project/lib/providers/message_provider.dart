@@ -23,6 +23,7 @@ class MessageProvider with ChangeNotifier {
     final userId = _auth.currentUser?.uid;
     if (userId == null) return;
 
+    // Lắng nghe sự thay đổi tin nhắn
     _messagesSubscription = _firestore
         .collection('users')
         .doc(userId)
@@ -75,19 +76,23 @@ class MessageProvider with ChangeNotifier {
       avatarUrl: avatarUrl ?? '',
     );
 
-    // Lưu tin nhắn vào Firestore cho người nhận
-    await _firestore
-        .collection('users')
-        .doc(recipientId)
-        .collection('messages')
-        .add(message.toMap());
+    try {
+      // Lưu tin nhắn vào Firestore cho người nhận
+      await _firestore
+          .collection('users')
+          .doc(recipientId)
+          .collection('messages')
+          .add(message.toMap());
 
-    // Lưu tin nhắn vào Firestore cho người gửi (tùy chọn)
-    await _firestore
-        .collection('users')
-        .doc(senderId)
-        .collection('sent_messages')
-        .add(message.toMap());
+      // Lưu tin nhắn vào Firestore cho người gửi (tùy chọn)
+      await _firestore
+          .collection('users')
+          .doc(senderId)
+          .collection('sent_messages')
+          .add(message.toMap());
+    } catch (e) {
+      print("Lỗi khi gửi tin nhắn: $e");
+    }
   }
 
   // Đánh dấu tin nhắn đã đọc
@@ -95,12 +100,16 @@ class MessageProvider with ChangeNotifier {
     final userId = _auth.currentUser?.uid;
     if (userId == null) return;
 
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('messages')
-        .doc(messageId)
-        .update({'read': true});
+    try {
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('messages')
+          .doc(messageId)
+          .update({'read': true});
+    } catch (e) {
+      print("Lỗi khi đánh dấu tin nhắn là đã đọc: $e");
+    }
   }
 
   // Xóa tất cả tin nhắn
@@ -108,21 +117,25 @@ class MessageProvider with ChangeNotifier {
     final userId = _auth.currentUser?.uid;
     if (userId == null) return;
 
-    final batch = _firestore.batch();
-    final messages =
-        await _firestore
-            .collection('users')
-            .doc(userId)
-            .collection('messages')
-            .get();
+    try {
+      final batch = _firestore.batch();
+      final messages =
+          await _firestore
+              .collection('users')
+              .doc(userId)
+              .collection('messages')
+              .get();
 
-    for (var doc in messages.docs) {
-      batch.delete(doc.reference);
+      for (var doc in messages.docs) {
+        batch.delete(doc.reference);
+      }
+
+      await batch.commit();
+      _messages.clear();
+      notifyListeners();
+    } catch (e) {
+      print("Lỗi khi xóa tin nhắn: $e");
     }
-
-    await batch.commit();
-    _messages.clear();
-    notifyListeners();
   }
 
   // Hủy lắng nghe tin nhắn khi không còn sử dụng

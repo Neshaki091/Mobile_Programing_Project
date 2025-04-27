@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:project/data/models/workoutSchedule.dart';
 import '../data/models/message.dart';
-import '../data/models/workoutSchedule.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -52,7 +52,6 @@ class NotificationService {
     final payload = receivedAction.payload;
     if (payload != null) {
       if (payload.containsKey('day')) {
-        // Điều hướng đến trang Workout Schedule
         navigatorKey.currentState?.pushNamed(
           '/workout-schedule',
           arguments: {
@@ -61,7 +60,6 @@ class NotificationService {
           },
         );
       } else if (payload.containsKey('sender_id')) {
-        // Điều hướng đến trang Messages
         navigatorKey.currentState?.pushNamed(
           '/messages',
           arguments: {
@@ -95,6 +93,7 @@ class NotificationService {
   Future<void> _requestNotificationPermissions() async {
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
     if (!isAllowed) {
+      // Có thể thông báo người dùng để cấp quyền
       await AwesomeNotifications().requestPermissionToSendNotifications();
     }
   }
@@ -124,6 +123,7 @@ class NotificationService {
     required int hour,
     required int minute,
   }) async {
+    debugPrint('Scheduling notification: $hour:$minute');
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
@@ -157,7 +157,7 @@ class NotificationService {
         notificationLayout: NotificationLayout.Messaging,
         category: NotificationCategory.Message,
         payload: {
-          'sender_id': message.userId,
+          'sender_id': message.userId.toString(),
           'sender_name': message.name,
           'text': message.text,
           'timestamp': message.timestamp.toString(),

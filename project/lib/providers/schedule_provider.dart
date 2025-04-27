@@ -25,6 +25,7 @@ class ScheduleProvider with ChangeNotifier {
 
   List<WorkoutSchedule> get schedule => List.unmodifiable(_schedule);
 
+  // Hàm khởi tạo để tải dữ liệu từ Firestore hoặc SharedPreferences
   Future<void> initialize() async {
     final user = _auth.currentUser;
     if (user != null) {
@@ -36,6 +37,7 @@ class ScheduleProvider with ChangeNotifier {
     await _notificationService.scheduleDailyNotifications();
   }
 
+  // Kiểm tra và thông báo lịch tập của hôm nay
   Future<void> _checkAndNotifyTodaySchedule() async {
     final now = DateTime.now();
     final today =
@@ -47,6 +49,7 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
+  // Cập nhật các bài tập cho ngày cụ thể
   void updateExercises(String day, List<String> newExercises) {
     final index = _schedule.indexWhere((s) => s.day == day);
     if (index != -1) {
@@ -56,6 +59,7 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
+  // Lưu lịch tập vào Firestore
   Future<void> saveToFirestore(String uid) async {
     try {
       final data = {for (var item in _schedule) item.day: item.exercises};
@@ -65,6 +69,7 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
+  // Tải lịch tập từ Firestore
   Future<void> loadFromFirestore(String uid) async {
     try {
       final doc =
@@ -83,6 +88,7 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
+  // Lưu lịch tập vào SharedPreferences
   Future<void> saveToLocal() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -93,6 +99,7 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
+  // Tải lịch tập từ SharedPreferences
   Future<void> loadFromLocal() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -111,6 +118,7 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
+  // Hàm xóa lịch tập (dùng để reset hoặc làm mới)
   void clearSchedule() {
     for (var item in _schedule) {
       item.exercises.clear();
