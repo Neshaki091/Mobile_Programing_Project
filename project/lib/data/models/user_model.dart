@@ -1,12 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserProfile {
   final String uid;
   final String email;
   final String name;
   final double height;
   final double weight;
-  final String avatarUrl; // URL của ảnh đại diện
+  final String avatarUrl;
   final int? age;
-  final bool isMale; // Thêm thuộc tính giới tính
+  final bool isMale;
+  final List<String> friends;
+  final List<String> favorites;
+  final List<String> myWorkouts;
 
   UserProfile({
     required this.uid,
@@ -14,9 +19,12 @@ class UserProfile {
     required this.name,
     required this.height,
     required this.weight,
-    this.avatarUrl = '', // Khởi tạo avatarUrl với giá trị mặc định
+    this.avatarUrl = '',
     this.age,
-    this.isMale = true, // Giới tính mặc định là nam
+    this.isMale = true,
+    required this.favorites,
+    required this.myWorkouts,
+    required this.friends,
   });
 
   factory UserProfile.fromMap(Map<String, dynamic> map) {
@@ -25,9 +33,30 @@ class UserProfile {
       email: map['email'],
       name: map['name'] ?? '',
       height: (map['height'] ?? 0).toDouble(),
-      weight: (map['weight'] ?? 0).toDouble(), // Lấy URL ảnh đại diện từ map
+      weight: (map['weight'] ?? 0).toDouble(),
+      avatarUrl: map['avatarUrl'] ?? '',
       age: map['age'],
-      isMale: map['isMale'] ?? true, // Giới tính mặc định là nam
+      isMale: map['isMale'] ?? true,
+      favorites: List<String>.from(map['favorites'] ?? []),
+      myWorkouts: List<String>.from(map['myWorkouts'] ?? []),
+      friends: List<String>.from(map['friends'] ?? []),
+    );
+  }
+
+  factory UserProfile.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return UserProfile(
+      uid: data['uid'] ?? '',
+      email: data['email'] ?? '',
+      name: data['name'] ?? '',
+      height: (data['height'] ?? 0).toDouble(),
+      weight: (data['weight'] ?? 0).toDouble(),
+      avatarUrl: data['avatarUrl'] ?? '',
+      age: data['age'],
+      isMale: data['isMale'] ?? true,
+      favorites: List<String>.from(data['favorites'] ?? []),
+      myWorkouts: List<String>.from(data['myWorkouts'] ?? []),
+      friends: List<String>.from(data['friends'] ?? []),
     );
   }
 
@@ -37,9 +66,13 @@ class UserProfile {
       'email': email,
       'name': name,
       'height': height,
-      'weight': weight, // Lưu URL ảnh đại diện vào map
+      'weight': weight,
+      'avatarUrl': avatarUrl,
       'age': age,
       'isMale': isMale,
+      'favorites': favorites,
+      'myWorkouts': myWorkouts,
+      'friends': friends,
     };
   }
 }

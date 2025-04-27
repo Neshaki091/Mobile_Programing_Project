@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:project/data/repositories/auth_repository.dart';
+import 'package:project/presentation/exercises/exercise_detail_screen.dart';
 import 'package:project/presentation/profile/EditProfileScreen.dart';
+import 'package:project/presentation/profile/app_settings_screen.dart';
+import 'package:project/presentation/profile/feedback_screen.dart';
+import 'package:project/presentation/profile/support_screen.dart';
 import 'package:project/widgets/appBar_widget.dart';
 import 'package:project/widgets/info_card.dart';
+
 import '../../routes/app_routes.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   final AuthRepository authRepo; // Thêm authRepo
@@ -86,8 +92,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Navigator.pushNamed(context, AppRoutes.home);
         break;
       case 1:
+        Navigator.pushNamed(context, AppRoutes.exercise);
         break;
       case 2:
+        Navigator.pushNamed(context, AppRoutes.workout);
         break;
       case 3:
         Navigator.pushNamed(context, AppRoutes.journey);
@@ -96,7 +104,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Navigator.pushNamed(context, AppRoutes.community);
         break;
       case 5:
-        Navigator.pushNamed(context, AppRoutes.profile);
         break;
     }
   }
@@ -235,19 +242,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           SettingsTile(
                             icon: Icons.settings,
                             title: 'Cài đặt ứng dụng',
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => AppSettingsScreen(),
+                              ));
+                            },
                           ),
                           SizedBox(height: 16.h),
                           SettingsTile(
                             icon: Icons.feedback_outlined,
                             title: 'Nhận xét',
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => FeedbackScreen(),
+                              ));
+                            },
                           ),
                           SizedBox(height: 16.h),
                           SettingsTile(
                             icon: Icons.help_outline,
                             title: 'Hỗ trợ',
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => SupportScreen(),
+                              ));
+                            },
                           ),
                           SizedBox(height: 16.h),
                           SettingsTile(

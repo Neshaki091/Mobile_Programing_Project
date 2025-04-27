@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../data/models/workout_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../data/models/nutrition_model.dart';
 
-class ExerciseDetailScreen extends StatelessWidget {
-  final Workout workout;
+class NutritionDetailScreen extends StatelessWidget {
+  final NutritionModel nutritionModel;
 
-  const ExerciseDetailScreen({Key? key, required this.workout}) : super(key: key);
+  const NutritionDetailScreen({Key? key, required this.nutritionModel})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // Thêm nền tối cho dễ nhìn
+      backgroundColor: Colors.grey,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -21,11 +22,12 @@ class ExerciseDetailScreen extends StatelessWidget {
                 height: 300.h,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: NetworkImage(workout.imageUrl),
+                    image: NetworkImage(nutritionModel.food_imageUrl),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
+              // Hiệu ứng fade mờ dần dưới ảnh
               Positioned.fill(
                 child: Align(
                   alignment: Alignment.bottomCenter,
@@ -35,12 +37,13 @@ class ExerciseDetailScreen extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+                        colors: [Colors.transparent, Colors.grey],
                       ),
                     ),
                   ),
                 ),
               ),
+              // Icon back
               SafeArea(
                 child: IconButton(
                   onPressed: () {
@@ -53,11 +56,12 @@ class ExerciseDetailScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              // Tên món ăn
               Positioned(
                 bottom: 20.h,
                 left: 15.w,
                 child: Text(
-                  workout.name,
+                  nutritionModel.foodName,
                   style: TextStyle(
                     fontSize: 30.sp,
                     fontWeight: FontWeight.bold,
@@ -75,26 +79,31 @@ class ExerciseDetailScreen extends StatelessWidget {
             ],
           ),
 
-          // Nội dung chi tiết bài tập
+          // Nội dung dinh dưỡng
           Padding(
             padding: EdgeInsets.all(15.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Độ khó: ${workout.level}",
+                  'Calories: ${nutritionModel.calories}',
                   style: TextStyle(fontSize: 18.sp, color: Colors.white),
                 ),
                 SizedBox(height: 8.h),
-                SingleChildScrollView(  // Cho phép cuộn nếu mô tả dài
-                  child: Text(
-                    workout.mota,
-                    style: TextStyle(fontSize: 18.sp, color: Colors.white),
-                    maxLines: 5, // Giới hạn số dòng nếu cần
-                    overflow: TextOverflow.ellipsis, // Hiển thị dấu "..." nếu văn bản quá dài
-                  ),
+                Text(
+                  'Protein: ${nutritionModel.nutrients.protein}g',
+                  style: TextStyle(fontSize: 18.sp, color: Colors.white),
                 ),
                 SizedBox(height: 8.h),
+                Text(
+                  'Carbohydrates: ${nutritionModel.nutrients.carbohydrates.total}g',
+                  style: TextStyle(fontSize: 18.sp, color: Colors.white),
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  'Fat: ${nutritionModel.nutrients.fat.total}g',
+                  style: TextStyle(fontSize: 18.sp, color: Colors.white),
+                ),
               ],
             ),
           ),

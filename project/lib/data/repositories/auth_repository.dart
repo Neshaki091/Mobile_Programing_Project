@@ -22,11 +22,9 @@ class AuthRepository {
   }
 
   Future<User?> signUpWithEmail(String email, String password) async {
-    final result = await _firebaseAuth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    return result.user;
+    final UserCredential userCredential = await _firebaseAuth
+        .createUserWithEmailAndPassword(email: email, password: password);
+    return userCredential.user;
   }
 
   Future<User?> signInWithGoogle() async {

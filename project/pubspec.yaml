@@ -44,6 +44,8 @@ dependencies:
   flutter_screenutil: ^5.9.0
   shared_preferences: ^2.1.0
 
+  flutter_timezone: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../data/repositories/nutrition_repository.dart';
 import '../../providers/nutrition_provider.dart';
 import '../../widgets/nutrition_provider.dart';
+import '../../routes/app_routes.dart';
 
 class NutritionScreen extends StatelessWidget {
   @override
@@ -31,7 +32,16 @@ class NutritionScreen extends StatelessWidget {
             return ListView.builder(
               itemCount: data.length,
               itemBuilder: (context, index) {
-                return NutritionItem(item: data[index]);
+                return InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.nutritionDetail,
+                      arguments: data[index],
+                    );
+                  },
+                  child: NutritionItem(item: data[index]),
+                );
               },
             );
           },

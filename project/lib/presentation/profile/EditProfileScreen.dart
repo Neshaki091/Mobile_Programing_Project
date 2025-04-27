@@ -22,7 +22,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _heightController = TextEditingController();
   final _ageController = TextEditingController(); // Thêm controller cho tuổi
   final _genderController = TextEditingController();
-  
+
   late String avatarUrl;
 
   @override
@@ -52,41 +52,72 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await prefs.setDouble('height', profile.height);
       await prefs.setString('gender', profile.isMale ? 'Nam' : 'Nữ');
       if (profile.age != null) {
-        await prefs.setInt('age', profile.age!); // Lưu tuổi vào SharedPreferences
+        await prefs.setInt(
+          'age',
+          profile.age!,
+        ); // Lưu tuổi vào SharedPreferences
       }
       await prefs.setString('email', profile.email);
-      await prefs.setString('avatarUrl', avatarUrl); // Lưu avatarUrl vào SharedPreferences
+      await prefs.setString(
+        'avatarUrl',
+        avatarUrl,
+      ); // Lưu avatarUrl vào SharedPreferences
     }
   }
 
   Future<void> _saveProfile() async {
-    final uid = widget.authRepo.currentUser?.uid;
-    if (uid == null) return;
+    try {
+      final uid = widget.authRepo.currentUser?.uid;
+      if (uid == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Không tìm thấy người dùng")),
+        );
+        return;
+      }
 
-    final profile = UserProfile(
-      uid: uid,
-      name: _nameController.text,
-      email: widget.authRepo.currentUser?.email ?? '',
-      weight: double.tryParse(_weightController.text) ?? 0,
-      height: double.tryParse(_heightController.text) ?? 0,
-      age: int.tryParse(_ageController.text), // Thêm tuổi vào profile
-      isMale: _genderController.text == 'Nam',
-    );
+      // Create the user profile with all available data
+      final profile = UserProfile(
+        uid: uid,
+        name: _nameController.text.trim(),
+        email: widget.authRepo.currentUser?.email ?? '',
+        weight: double.tryParse(_weightController.text) ?? 0,
+        height: double.tryParse(_heightController.text) ?? 0,
+        age: int.tryParse(_ageController.text),
+        isMale: _genderController.text == 'Nam',
+        avatarUrl: widget.authRepo.currentUser?.photoURL ?? '',
+        favorites: const [], // Initialize empty lists
+        myWorkouts: const [],
+        friends: const [],
+      );
 
-    await widget.authRepo.updateUserProfile(profile);
+      // Update profile in authentication repository
+      await widget.authRepo.updateUserProfile(profile);
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('name', profile.name);
-    await prefs.setDouble('weight', profile.weight);
-    await prefs.setDouble('height', profile.height);
-    await prefs.setString('gender', profile.isMale ? 'Nam' : 'Nữ');
-    if (profile.age != null) {
-      await prefs.setInt('age', profile.age!); // Lưu tuổi vào SharedPreferences
+      // Save to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('name', profile.name);
+      await prefs.setDouble('weight', profile.weight);
+      await prefs.setDouble('height', profile.height);
+      await prefs.setString('gender', profile.isMale ? 'Nam' : 'Nữ');
+      if (profile.age != null) {
+        await prefs.setInt('age', profile.age!);
+      }
+      if (profile.avatarUrl.isNotEmpty) {
+        await prefs.setString('avatarUrl', profile.avatarUrl);
+      }
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Thông tin đã được lưu thành công!")),
+      );
+
+      // Optionally: Navigate back or refresh the UI
+      // Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Lỗi khi lưu thông tin: ${e.toString()}")),
+      );
     }
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text("Thông tin đã được lưu!")));
   }
 
   @override
@@ -102,7 +133,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           IconButton(
             icon: Icon(Icons.logout, color: Colors.blue),
             onPressed:
-                () => Navigator.pop(context, ProfileScreen(authRepo: widget.authRepo)),
+                () => Navigator.pop(
+                  context,
+                  ProfileScreen(authRepo: widget.authRepo),
+                ),
           ),
         ],
       ),
@@ -155,7 +189,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 decoration: InputDecoration(labelText: 'Chiều cao (cm)'),
                 keyboardType: TextInputType.number,
               ),
-              TextField( // Thêm TextField cho tuổi
+              TextField(
+                // Thêm TextField cho tuổi
                 controller: _ageController,
                 decoration: InputDecoration(labelText: 'Tuổi'),
                 keyboardType: TextInputType.number,
@@ -204,7 +239,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 enabled: false,
               ),
               SizedBox(height: 20),
-              ElevatedButton(onPressed: _saveProfile, child: Text("Lưu")),
+              ElevatedButton(
+                onPressed: () {
+                  _saveProfile();
+                  Navigator.pop(context);
+                },
+                child: Text("Lưu"),
+              ),
             ],
           ),
         ),

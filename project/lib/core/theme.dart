@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  // Light theme colors
   static const Color primary = Color(0xFF1E88E5);
   static const Color secondary = Color(0xFF42A5F5);
   static const Color background = Color(0xFFF5F5F5);
@@ -8,8 +9,19 @@ class AppColors {
   static const Color light = Colors.white;
   static const Color infoCard = Color(0xFFCDE5FF);
   static const Color success = Color(0xFFE8F5E9);
+  
+  // Dark theme colors
+  static const Color primaryDark = Color(0xFF1976D2);
+  static const Color secondaryDark = Color(0xFF2196F3);
+  static const Color backgroundDark = Color(0xFF121212);
+  static const Color darkModeText = Colors.white;
+  static const Color darkCardColor = Color(0xFF1E1E1E);
+  static const Color infoCardDark = Color(0xFF0D47A1);
+  static const Color successDark = Color(0xFF1B5E20);
 }
+
 class AppTextStyles {
+  // Light theme text styles
   static const TextStyle heading = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.bold,
@@ -24,9 +36,27 @@ class AppTextStyles {
     fontSize: 12,
     color: Colors.grey,
   );
+  
+  // Dark theme text styles
+  static const TextStyle headingDark = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  );
+
+  static const TextStyle bodyDark = TextStyle(
+    fontSize: 16,
+    color: Colors.white70,
+  );
+
+  static const TextStyle captionDark = TextStyle(
+    fontSize: 12,
+    color: Colors.grey,
+  );
 }
 
-final ThemeData appTheme = ThemeData(
+// Giữ nguyên appTheme làm lightTheme
+final ThemeData lightTheme = ThemeData(
   primaryColor: AppColors.primary,
   scaffoldBackgroundColor: AppColors.background,
   appBarTheme: const AppBarTheme(
@@ -45,4 +75,47 @@ final ThemeData appTheme = ThemeData(
     secondary: AppColors.secondary,
     background: AppColors.background,
   ),
+);
+
+// Tạo mới dark theme
+final ThemeData darkTheme = ThemeData(
+  brightness: Brightness.dark,
+  primaryColor: AppColors.primaryDark,
+  scaffoldBackgroundColor: AppColors.backgroundDark,
+  appBarTheme: const AppBarTheme(
+    elevation: 0,
+    backgroundColor: AppColors.darkCardColor,
+    foregroundColor: AppColors.light,
+  ),
+  textTheme: const TextTheme(
+    bodyLarge: AppTextStyles.bodyDark,
+    titleLarge: AppTextStyles.headingDark,
+    bodySmall: AppTextStyles.captionDark,
+  ),
+  
+  cardColor: AppColors.darkCardColor,
+  dialogBackgroundColor: AppColors.darkCardColor,
+  
+  colorScheme: ColorScheme.dark(
+    primary: AppColors.primaryDark,
+    secondary: AppColors.secondaryDark,
+    background: AppColors.backgroundDark,
+    surface: AppColors.darkCardColor,
+  ),
+  
+  // Tùy chỉnh màu sắc cho các thành phần cụ thể trong dark mode
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    backgroundColor: AppColors.darkCardColor,
+    selectedItemColor: AppColors.primaryDark,
+    unselectedItemColor: Colors.grey,
+  ),
+  
+  // Màu nền cho các widget như Dialog, BottomSheet
+  canvasColor: AppColors.backgroundDark,
+  
+  // Màu cho divider (đường phân cách)
+  dividerColor: Colors.grey[800],
+  
+  // Màu cho RadioButton, Checkbox
+  // toggleableActiveColor: AppColors.primaryDark,
 );

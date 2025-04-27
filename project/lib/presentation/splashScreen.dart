@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen>
   // Tải dữ liệu khi khởi tạo
   Future<void> _loadData() async {
     final authProvider = Provider.of<AuthenticProvider>(context, listen: false);
-    final workoutProvider = Provider.of<WorkoutProvider>(
+    final workoutProvider = Provider.of<ScheduleProvider>(
       context,
       listen: false,
     );
