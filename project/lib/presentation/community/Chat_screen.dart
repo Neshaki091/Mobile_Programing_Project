@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart'; // Import Firebase Messaging
 import '../../data/models/message.dart';
 import '../../data/models/user_model.dart';
 
@@ -31,6 +32,19 @@ class _ChatScreenState extends State<ChatScreen> {
     chatRoomId = _getChatRoomId(widget.currentUser.uid, widget.friend.uid);
     _chatRef = FirebaseDatabase.instance.ref('private_chats/$chatRoomId');
     _listenToMessages();
+
+    // Firebase Messaging setup
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        // Khi có thông báo đến, bạn có thể làm gì đó (ví dụ cuộn xuống hoặc hiển thị thông báo)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message.notification!.body ?? 'Có tin nhắn mới'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    });
   }
 
   String _getChatRoomId(String userId1, String userId2) {

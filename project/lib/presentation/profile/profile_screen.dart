@@ -7,7 +7,6 @@ import 'package:project/presentation/profile/feedback_screen.dart';
 import 'package:project/presentation/profile/support_screen.dart';
 import 'package:project/widgets/appBar_widget.dart';
 import 'package:project/widgets/journey_provider.dart';
-
 import '../../routes/app_routes.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -35,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUserData(); // Gọi hàm tải dữ liệu khi khởi tạo màn hình
+    _loadUserData(); // gọi hàm tách riêng
   }
 
   // Hàm tải dữ liệu người dùng
