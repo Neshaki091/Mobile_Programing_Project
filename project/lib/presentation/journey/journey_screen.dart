@@ -112,18 +112,21 @@ class _JourneyScreenState extends State<JourneyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final iconColor = isDarkMode ? Colors.white : Colors.black;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text('Training journey', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
+        title: Text('Training journey', style: TextStyle(color: iconColor, fontWeight: FontWeight.bold)),
         elevation: 0,
         centerTitle: true,
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : _profile == null
-              ? Center(child: Text('Không có dữ liệu!'))
+              ? Center(child: Text('Không có dữ liệu!', style: TextStyle(color: textColor)))
               : SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
                   child: Column(

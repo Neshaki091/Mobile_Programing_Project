@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'providers/schedule_provider.dart';
 import 'providers/authentic_provider.dart';
+import 'providers/theme_provider.dart'; // Import ThemeProvider
 import '../../core/theme.dart';
 import 'routes/app_routes.dart'; // Import SplashScreen
 
@@ -24,18 +25,20 @@ class MyApp extends StatelessWidget {
           create: (_) => AuthenticProvider()..initializeAuth(),
         ),
         ChangeNotifierProvider(create: (_) => WorkoutProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()), // Add ThemeProvider
       ],
-      child: Consumer<AuthenticProvider>(
-        builder: (context, auth, _) {
+      child: Consumer2<AuthenticProvider, ThemeProvider>(
+        builder: (context, auth, themeProvider, _) {
           return ScreenUtilInit(
             designSize: const Size(375, 812),
             minTextAdapt: true,
             builder: (context, child) {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
-                theme: appTheme,
-                initialRoute:
-                    AppRoutes.splash, // SplashScreen sẽ là màn hình đầu tiên
+                theme: lightTheme,       // appTheme và lightTheme là giống nhau
+                darkTheme: darkTheme,    // Sử dụng darkTheme cho chế độ tối
+                themeMode: themeProvider.themeMode, // Lấy themeMode từ provider
+                initialRoute: AppRoutes.splash,
                 onGenerateRoute: AppRoutes.generateRoute,
               );
             },
