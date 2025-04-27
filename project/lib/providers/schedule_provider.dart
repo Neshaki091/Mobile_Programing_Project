@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../core/notification.dart';
 import '../data/models/workoutSchedule.dart';
 
 class ScheduleProvider with ChangeNotifier {
@@ -15,23 +17,49 @@ class ScheduleProvider with ChangeNotifier {
     WorkoutSchedule(day: 'SUN', exercises: []),
   ];
 
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final NotificationService _notificationService;
+
+  ScheduleProvider() : _notificationService = NotificationService();
+
   List<WorkoutSchedule> get schedule => List.unmodifiable(_schedule);
+
+  Future<void> initialize() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await loadFromFirestore(user.uid);
+      await _checkAndNotifyTodaySchedule();
+    } else {
+      await loadFromLocal();
+    }
+    await _notificationService.scheduleDailyNotifications();
+  }
+
+  Future<void> _checkAndNotifyTodaySchedule() async {
+    final now = DateTime.now();
+    final today =
+        ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'][now.weekday - 1];
+    final todaySchedule = _schedule.firstWhere((s) => s.day == today);
+
+    if (todaySchedule.exercises.isNotEmpty) {
+      await _notificationService.showScheduleNotification(todaySchedule);
+    }
+  }
 
   void updateExercises(String day, List<String> newExercises) {
     final index = _schedule.indexWhere((s) => s.day == day);
     if (index != -1) {
       _schedule[index].exercises = newExercises;
       notifyListeners();
+      _checkAndNotifyTodaySchedule();
     }
   }
 
   Future<void> saveToFirestore(String uid) async {
     try {
       final data = {for (var item in _schedule) item.day: item.exercises};
-      await FirebaseFirestore.instance
-          .collection('workout_schedules')
-          .doc(uid)
-          .set(data);
+      await _firestore.collection('workout_schedules').doc(uid).set(data);
     } catch (e) {
       debugPrint('Error saving to Firestore: $e');
     }
@@ -40,11 +68,7 @@ class ScheduleProvider with ChangeNotifier {
   Future<void> loadFromFirestore(String uid) async {
     try {
       final doc =
-          await FirebaseFirestore.instance
-              .collection('workout_schedules')
-              .doc(uid)
-              .get();
-
+          await _firestore.collection('workout_schedules').doc(uid).get();
       if (doc.exists) {
         final data = doc.data() as Map<String, dynamic>;
         for (var item in _schedule) {

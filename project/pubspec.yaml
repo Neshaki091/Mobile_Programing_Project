@@ -43,9 +43,9 @@ dependencies:
   flutter_signin_button: ^2.0.0
   flutter_screenutil: ^5.9.0
   shared_preferences: ^2.1.0
-
+  awesome_notifications: ^0.10.1
   flutter_timezone: any
-
+  firebase_messaging: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

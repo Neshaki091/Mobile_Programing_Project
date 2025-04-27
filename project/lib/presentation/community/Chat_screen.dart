@@ -50,7 +50,11 @@ class _ChatScreenState extends State<ChatScreen> {
           loaded.add(message);
         });
         loaded.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-        setState(() => messages = loaded);
+
+        // Kiểm tra xem widget có còn tồn tại không trước khi gọi setState()
+        if (mounted) {
+          setState(() => messages = loaded);
+        }
       }
     });
   }
@@ -70,7 +74,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     _chatRef.push().set(message);
 
-    // Auto scroll
+    // Tự động cuộn xuống tin nhắn mới
     Future.delayed(Duration(milliseconds: 300), () {
       _scrollController.animateTo(
         0,

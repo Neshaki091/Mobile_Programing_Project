@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
+import '../../core/notification.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../providers/authentic_provider.dart';
 import '../../providers/schedule_provider.dart';
@@ -30,32 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _firebaseService = FirebaseService();
     _productsFuture = _firebaseService.getProducts();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkUserInfo();
-    });
-  }
-
-  void _checkUserInfo() async {
-    final authProvider = Provider.of<AuthenticProvider>(context, listen: false);
-    final uid = widget.authRepo.currentUser?.uid;
-    if (uid == null) return;
-
-    try {
-      final profile = await widget.authRepo.getUserProfile(uid);
-
-      if (profile == null ||
-          profile.name.isEmpty ||
-          profile.name.trim().isEmpty) {
-        // Nếu chưa có profile hoặc tên bị thiếu => bắt cập nhật
-        Navigator.pushNamed(
-          context,
-          AppRoutes.profile,
-          arguments: authProvider.authRepo,
-        );
-      }
-    } catch (e) {
-      print("Lỗi khi kiểm tra thông tin người dùng: $e");
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
 
   Future<void> _handleLogout(
@@ -142,16 +118,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (value == "2") {
                     _handleLogout(context, authProvider);
                   } else if (value == "1") {
-                    Navigator.pushNamed(
-                      context,
-                      AppRoutes.profile,
-                      arguments: authProvider.authRepo,
-                    );
+                    NotificationService().testNotification();
                   }
                 },
                 itemBuilder:
                     (context) => const [
-                      PopupMenuItem(value: "1", child: Text("Trang cá nhân")),
+                      PopupMenuItem(value: "1", child: Text("test thông báo")),
                       PopupMenuItem(value: "2", child: Text("Đăng xuất")),
                     ],
               ),
