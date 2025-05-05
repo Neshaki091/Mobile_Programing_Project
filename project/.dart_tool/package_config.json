@@ -434,10 +434,10 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-04-17T01:21:29.871026Z",
+  "generated": "2025-05-05T12:18:04.744341Z",
   "generator": "pub",
-  "generatorVersion": "3.7.0",
+  "generatorVersion": "3.7.2",
   "flutterRoot": "file:///C:/flutter",
-  "flutterVersion": "3.29.1",
+  "flutterVersion": "3.29.3",
   "pubCache": "file:///C:/Users/huynh/AppData/Local/Pub/Cache"
 }
