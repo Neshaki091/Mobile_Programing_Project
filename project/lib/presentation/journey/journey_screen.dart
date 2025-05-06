@@ -138,13 +138,13 @@ class _JourneyScreenState extends State<JourneyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           'Training journey',
           style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),

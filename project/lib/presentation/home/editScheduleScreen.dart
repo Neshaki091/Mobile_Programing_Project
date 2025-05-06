@@ -165,11 +165,16 @@ class EditScheduleScreen extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color:
+                      Theme.of(context).brightness == Brightness.light
+                          ? Colors.white
+                          : Colors.grey[850],
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade200,
+                      color: Theme.of(context).brightness == Brightness.light
+                ? Colors.grey.withOpacity(0.2)
+                : Colors.black.withOpacity(0.2),
                       blurRadius: 4,
                       offset: Offset(0, 2),
                     ),

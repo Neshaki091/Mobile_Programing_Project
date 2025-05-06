@@ -128,7 +128,7 @@ class _BodyMeasurementScreenState extends State<BodyMeasurementScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Số đo cơ thể'),
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         foregroundColor: Colors.blue,
         elevation: 0,
       ),

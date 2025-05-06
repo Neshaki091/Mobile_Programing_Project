@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:project/data/repositories/auth_repository.dart';
-import 'package:project/presentation/exercises/exercise_detail_screen.dart';
 import 'package:project/presentation/profile/EditProfileScreen.dart';
 import 'package:project/presentation/profile/app_settings_screen.dart';
 import 'package:project/presentation/profile/feedback_screen.dart';
 import 'package:project/presentation/profile/support_screen.dart';
+import 'package:project/presentation/profile/account_settings_screen.dart';
 import 'package:project/widgets/appBar_widget.dart';
 import 'package:project/widgets/info_card.dart';
 
@@ -236,7 +236,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           SettingsTile(
                             icon: Icons.person_outline,
                             title: 'Cài đặt tài khoản',
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const AccountSettingsScreen(),
+                                ),
+                              );
+                            },
                           ),
                           SizedBox(height: 16.h),
                           SettingsTile(

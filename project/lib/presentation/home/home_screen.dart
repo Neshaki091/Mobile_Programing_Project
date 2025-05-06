@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         appBar: AppBar(
           shadowColor: Colors.white,
-          backgroundColor: Colors.white,
+          // backgroundColor: Colors.white,
           systemOverlayStyle: SystemUiOverlayStyle.dark,
           elevation: 0,
           automaticallyImplyLeading: false,
@@ -132,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: SingleChildScrollView(
           child: Container(
-            color: const Color.fromARGB(255, 245, 245, 245),
+            // color: const Color.fromARGB(255, 245, 245, 245),
             child: SafeArea(
               child: Column(
                 children: [
@@ -325,7 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Text(
               day,
               style: TextStyle(
-                color: isWeekend ? Colors.red : Colors.black,
+                color: isWeekend ? Colors.red : (Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white),
                 fontWeight: FontWeight.bold,
                 fontSize: 13.sp,
               ),

@@ -21,11 +21,15 @@ class ExerciseItemWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.light 
+              ? Colors.white 
+              : Colors.grey[850],
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.grey.withOpacity(0.2)
+                : Colors.black.withOpacity(0.2),
             spreadRadius: 2,
             blurRadius: 5,
             offset: Offset(0, 3),
@@ -134,11 +138,15 @@ class WorkoutItemWidget extends StatelessWidget {
         width: 160, // Nhỏ gọn để kéo ngang
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+            color: Theme.of(context).brightness == Brightness.light 
+              ? Colors.white 
+              : Colors.grey[850],
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Theme.of(context).brightness == Brightness.light
+                ? Colors.grey.withOpacity(0.2)
+                : Colors.black.withOpacity(0.2),
               spreadRadius: 2,
               blurRadius: 5,
               offset: const Offset(0, 3),
