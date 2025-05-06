@@ -140,7 +140,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: const Icon(Icons.list),
                 onSelected: (value) {
                   if (value == "2") {
-                    _handleLogout(context, authProvider);
+                    authProvider.signOut();
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRoutes.login,
+                      (route) => false,
+                    );
                   } else if (value == "1") {
                     Navigator.pushNamed(
                       context,

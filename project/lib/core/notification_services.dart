@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import '../data/models/notification.dart'; // File bạn gửi ở trên
 import 'package:flutter/material.dart';
+import '../data/models/message.dart';
 
 class NotificationService {
   static Future<void> initializeAwesome() async {

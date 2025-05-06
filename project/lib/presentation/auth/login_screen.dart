@@ -16,7 +16,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
 
-  void _login(BuildContext context) async {
+  Future<void> _handleLogin(
+    BuildContext context,
+    Future<bool> Function() loginMethod,
+  ) async {
     setState(() => _isLoading = true);
 
     final authProvider = Provider.of<AuthenticProvider>(context, listen: false);
@@ -25,10 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
       listen: false,
     );
 
-    bool success = await authProvider.login(
-      _emailController.text.trim(),
-      _passwordController.text.trim(),
-    );
+    bool success = await loginMethod();
 
     setState(() => _isLoading = false);
 
@@ -39,43 +39,15 @@ class _LoginScreenState extends State<LoginScreen> {
         await workoutProvider.loadFromFirestore(user.uid);
         Navigator.pushReplacementNamed(context, AppRoutes.home);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Không lấy được thông tin người dùng!")),
-        );
+        _showErrorSnackbar(context, "Không lấy được thông tin người dùng!");
       }
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Đăng nhập không thành công!")));
     }
   }
 
-  void _loginWithGoogle(BuildContext context) async {
-    setState(() => _isLoading = true);
-
-    final authProvider = Provider.of<AuthenticProvider>(context, listen: false);
-    final workoutProvider = Provider.of<ScheduleProvider>(
+  void _showErrorSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(
       context,
-      listen: false,
-    );
-
-    bool success = await authProvider.loginWithGoogle();
-    setState(() => _isLoading = false);
-
-    if (success) {
-      final user = authProvider.user;
-      if (user != null) {
-        workoutProvider.clearSchedule();
-        await workoutProvider.loadFromFirestore(user.uid);
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Không lấy được thông tin người dùng từ Google!"),
-          ),
-        );
-      }
-    }
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -100,8 +72,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 emailController: _emailController,
                 passwordController: _passwordController,
                 isLoading: _isLoading,
-                onLogin: () => _login(context),
-                onGoogleLogin: () => _loginWithGoogle(context),
+                onLogin:
+                    () => _handleLogin(
+                      context,
+                      () => context.read<AuthenticProvider>().login(
+                        _emailController.text.trim(),
+                        _passwordController.text.trim(),
+                      ),
+                    ),
+                onGoogleLogin:
+                    () => _handleLogin(
+                      context,
+                      () => context.read<AuthenticProvider>().loginWithGoogle(),
+                    ),
               ),
               SizedBox(height: 100.h),
               Column(

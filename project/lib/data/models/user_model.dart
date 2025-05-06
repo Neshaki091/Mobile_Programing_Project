@@ -12,6 +12,7 @@ class UserProfile {
   final List<String> friends;
   final List<String> favorites;
   final List<String> myWorkouts;
+  final String? fcmToken;  // Thêm trường fcmToken
 
   UserProfile({
     required this.uid,
@@ -25,8 +26,10 @@ class UserProfile {
     required this.favorites,
     required this.myWorkouts,
     required this.friends,
+    this.fcmToken,  // Thêm fcmToken vào constructor
   });
 
+  // Tạo UserProfile từ Map
   factory UserProfile.fromMap(Map<String, dynamic> map) {
     return UserProfile(
       uid: map['uid'],
@@ -40,9 +43,11 @@ class UserProfile {
       favorites: List<String>.from(map['favorites'] ?? []),
       myWorkouts: List<String>.from(map['myWorkouts'] ?? []),
       friends: List<String>.from(map['friends'] ?? []),
+      fcmToken: map['fcmToken'],  // Lấy fcmToken từ Map
     );
   }
 
+  // Tạo UserProfile từ Firestore DocumentSnapshot
   factory UserProfile.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return UserProfile(
@@ -57,9 +62,11 @@ class UserProfile {
       favorites: List<String>.from(data['favorites'] ?? []),
       myWorkouts: List<String>.from(data['myWorkouts'] ?? []),
       friends: List<String>.from(data['friends'] ?? []),
+      fcmToken: data['fcmToken'],  // Lấy fcmToken từ Firestore
     );
   }
 
+  // Chuyển UserProfile thành Map
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
@@ -73,6 +80,7 @@ class UserProfile {
       'favorites': favorites,
       'myWorkouts': myWorkouts,
       'friends': friends,
+      'fcmToken': fcmToken,  // Lưu fcmToken
     };
   }
 }

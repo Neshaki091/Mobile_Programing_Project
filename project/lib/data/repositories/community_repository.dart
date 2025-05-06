@@ -1,6 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import '../models/message.dart';
 import '../models/user_model.dart'; // Đảm bảo có model này
 import '../repositories/auth_repository.dart';
@@ -10,30 +11,77 @@ class CommunityRepository {
     'messages',
   );
   final DatabaseReference _usersRef = FirebaseDatabase.instance.ref('users');
-  final AuthRepository _authRepo = AuthRepository();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final AuthRepository _authRepo = AuthRepository();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   /// Gửi tin nhắn mới
-  Future<void> sendMessage(String text, String userId) async {
+  Future<void> sendMessage(
+    String text,
+    String receiverId,
+    String senderId,
+  ) async {
     try {
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final newMessageRef = _messagesRef.push();
 
-      final userProfile = await _authRepo.getUserProfile(userId);
-      final currentUser = _auth.currentUser;
+      final userProfile = await _authRepo.getUserProfile(senderId);
+      final receiverProfile = await _authRepo.getUserProfile(receiverId);
 
       final message = {
         'text': text.trim(),
-        'userId': userId,
+        'senderId': senderId,
+        'receiverId': receiverId,
         'timestamp': timestamp,
-        'name': userProfile?.name ?? currentUser?.displayName ?? 'Người dùng',
-        'avatarUrl': currentUser?.photoURL ?? userProfile?.avatarUrl ?? '',
+        'senderName': userProfile?.name ?? 'Người gửi',
+        'receiverName': receiverProfile?.name ?? 'Người nhận',
+        'senderAvatar': userProfile?.avatarUrl ?? '',
+        'receiverAvatar': receiverProfile?.avatarUrl ?? '',
       };
 
+      // Lưu tin nhắn vào Firebase Realtime Database
       await newMessageRef.set(message);
+
+      // Sau khi lưu tin nhắn, gọi hàm gửi thông báo FCM
+      await _sendNotification(receiverId, message);
     } catch (e) {
       print("Lỗi khi gửi tin nhắn: $e");
+    }
+  }
+
+  /// Gửi thông báo qua FCM
+  Future<void> _sendNotification(
+    String receiverId,
+    Map<String, dynamic> message,
+  ) async {
+    try {
+      final receiverUserProfile = await _authRepo.getUserProfile(receiverId);
+
+      if (receiverUserProfile?.fcmToken != null) {
+        final notification = {
+          'title': '${message['senderName']} đã gửi tin nhắn',
+          'body': message['text'],
+        };
+
+        final fcmMessage = {
+          'to': receiverUserProfile?.fcmToken,
+          'notification': notification,
+          'data': {
+            'senderId': message['senderId'],
+            'receiverId': message['receiverId'],
+            'messageId': message['timestamp'].toString(),
+          },
+        };
+
+        // Gửi thông báo qua FirebaseMessaging
+        await _firebaseMessaging.sendMessage(
+          to: receiverUserProfile?.fcmToken,
+          data: fcmMessage.map((key, value) => MapEntry(key, value.toString())),
+        );
+      }
+    } catch (e) {
+      print("Lỗi khi gửi thông báo FCM: $e");
     }
   }
 
@@ -49,29 +97,41 @@ class CommunityRepository {
     }
   }
 
-  /// Lấy danh sách tin nhắn theo thời gian thực (Stream)
-  Stream<List<Message>> getMessages() {
-    return _messagesRef.orderByChild('timestamp').onValue.map((event) {
-      final messages = <Message>[];
-      final data = event.snapshot.value;
+  /// Lấy danh sách tin nhắn từ phòng chat (chat room)
+  Stream<List<Message>> getMessages(String receiverId) {
+    final senderId = _auth.currentUser!.uid;
+    final chatRoomId = _getChatRoomId(senderId, receiverId);
 
-      if (data != null && data is Map) {
-        final rawMap = Map<String, dynamic>.from(data);
-        rawMap.forEach((key, value) {
-          try {
-            final messageMap = Map<String, dynamic>.from(value);
-            final message = Message.fromDatabase(messageMap);
-            messages.add(message);
-          } catch (e) {
-            print("Lỗi khi chuyển đổi dữ liệu tin nhắn: $e");
-          }
-        });
+    return _messagesRef.child(chatRoomId).orderByChild('timestamp').onValue.map(
+      (event) {
+        final messages = <Message>[];
+        final data = event.snapshot.value;
 
-        messages.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-      }
+        if (data != null && data is Map) {
+          final rawMap = Map<String, dynamic>.from(data);
+          rawMap.forEach((key, value) {
+            try {
+              final messageMap = Map<String, dynamic>.from(value);
+              final message = Message.fromDatabase(messageMap);
+              messages.add(message);
+            } catch (e) {
+              print("Lỗi khi chuyển đổi dữ liệu tin nhắn: $e");
+            }
+          });
 
-      return messages;
-    });
+          messages.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        }
+
+        return messages;
+      },
+    );
+  }
+
+  /// Tạo ID cho phòng chat giữa 2 người
+  String _getChatRoomId(String senderId, String receiverId) {
+    return senderId.hashCode <= receiverId.hashCode
+        ? '$senderId-$receiverId'
+        : '$receiverId-$senderId';
   }
 
   /// Tìm kiếm người dùng theo tên (hoặc email, v.v.)

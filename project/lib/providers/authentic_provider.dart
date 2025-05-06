@@ -25,6 +25,9 @@ class AuthenticProvider with ChangeNotifier {
   Future<bool> login(String email, String password) async {
     try {
       _user = await _authRepo.signInWithEmail(email, password);
+      if (_user != null) {
+        await _authRepo.saveFCMToken(); // Lưu FCM token khi đăng nhập
+      }
       notifyListeners();
       return _user != null;
     } catch (e) {
@@ -35,6 +38,9 @@ class AuthenticProvider with ChangeNotifier {
   Future<bool> register(String email, String password) async {
     try {
       _user = await _authRepo.signUpWithEmail(email, password);
+      if (_user != null) {
+        await _authRepo.saveFCMToken(); // Lưu FCM token khi đăng ký
+      }
       notifyListeners();
       return _user != null;
     } catch (e) {
@@ -45,6 +51,10 @@ class AuthenticProvider with ChangeNotifier {
   Future<bool> loginWithGoogle() async {
     try {
       _user = await _authRepo.signInWithGoogle();
+      if (_user != null) {
+        await _authRepo
+            .saveFCMToken(); // Lưu FCM token khi đăng nhập qua Google
+      }
       notifyListeners();
       return _user != null;
     } catch (e) {
@@ -56,6 +66,11 @@ class AuthenticProvider with ChangeNotifier {
     // Xoá lịch tập local khi đăng xuất
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('workout_schedule');
+
+    // Xóa FCM Token khi đăng xuất
+    if (_user != null) {
+      await _authRepo.removeFCMToken(); // Gọi phương thức xóa FCM token
+    }
 
     await FirebaseAuth.instance.signOut();
     _user = null;

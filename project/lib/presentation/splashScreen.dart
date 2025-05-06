@@ -14,6 +14,8 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  late Future<void> _loadDataFuture;
+
   @override
   void initState() {
     super.initState();
@@ -26,7 +28,8 @@ class _SplashScreenState extends State<SplashScreen>
       begin: 0,
       end: 1,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
-    _loadData();
+
+    _loadDataFuture = _loadData(); // Lưu kết quả của loadData
   }
 
   // Tải dữ liệu khi khởi tạo
@@ -45,13 +48,14 @@ class _SplashScreenState extends State<SplashScreen>
       debugPrint('User not logged in or userId is null');
     }
 
-    Timer(const Duration(seconds: 2), () {
-      if (authProvider.isLoggedIn) {
-        Navigator.pushReplacementNamed(context, '/home');
-      } else {
-        Navigator.pushReplacementNamed(context, '/login');
-      }
-    });
+    // Chờ một khoảng thời gian sau khi tải dữ liệu xong trước khi điều hướng
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (authProvider.isLoggedIn) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
 
   @override
