@@ -18,7 +18,7 @@ class EditScheduleScreen extends StatelessWidget {
   ];
 
   Future<void> _saveSchedule(BuildContext context) async {
-    final workoutProvider = Provider.of<WorkoutProvider>(
+    final workoutProvider = Provider.of<ScheduleProvider>(
       context,
       listen: false,
     );
@@ -41,21 +41,20 @@ class EditScheduleScreen extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("lời khuyên"),
+          title: Text("Lời khuyên"),
           content: Text(
-            "Bạn chỉ nên tập 3 đến 4 nhóm cơ một ngày để tránh sự mệt mỏi và quá tải lên cơ bắp của bạn",
+            "Bạn chỉ nên tập 3 đến 4 nhóm cơ một ngày để tránh sự mệt mỏi và quá tải lên cơ bắp của bạn.",
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-
               child: Text('Vâng tôi đã hiểu'),
             ),
           ],
         );
       },
     );
-  } // Nếu đã chọn 4 nhóm cơ, không cho phép chọn thêm
+  }
 
   void _editExercises(BuildContext context, String day, List<String> selected) {
     showDialog(
@@ -103,7 +102,7 @@ class EditScheduleScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Provider.of<WorkoutProvider>(
+                Provider.of<ScheduleProvider>(
                   context,
                   listen: false,
                 ).updateExercises(day, tempSelected);
@@ -117,9 +116,56 @@ class EditScheduleScreen extends StatelessWidget {
     );
   }
 
+  // Thêm phần xóa lịch tập cho ngày
+  void _deleteAllExercises(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Xóa lịch tập cho cả tuần?'),
+          content: Text(
+            'Bạn có chắc chắn muốn xóa tất cả bài tập cho cả tuần không?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Đóng dialog nếu người dùng nhấn Huỷ
+              },
+              child: const Text('Huỷ'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Lặp qua tất cả các ngày trong tuần và xóa bài tập
+                final workoutProvider = Provider.of<ScheduleProvider>(
+                  context,
+                  listen: false,
+                );
+                for (var daySchedule in workoutProvider.schedule) {
+                  workoutProvider.updateExercises(
+                    daySchedule.day,
+                    [],
+                  ); // Xóa tất cả bài tập cho mỗi ngày
+                }
+                Navigator.pop(context); // Đóng dialog sau khi xóa
+
+                // Hiển thị thông báo snackbar xác nhận
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Đã xóa tất cả bài tập cho cả tuần!'),
+                  ),
+                );
+              },
+              child: const Text('Xóa'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final workoutProvider = Provider.of<WorkoutProvider>(context);
+    final workoutProvider = Provider.of<ScheduleProvider>(context);
     final schedule = workoutProvider.schedule;
 
     return Scaffold(
@@ -131,15 +177,20 @@ class EditScheduleScreen extends StatelessWidget {
                 _saveSchedule(context);
                 Navigator.pushNamed(context, AppRoutes.home);
               },
-              icon: Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.blue,
-              ), // Replace 'icon' with a valid Icon widget
+              icon: Icon(Icons.arrow_back_ios_new, color: Colors.blue),
             ),
             SizedBox(width: 50.w),
             const Text(
               'Chỉnh sửa lịch tập',
               style: TextStyle(color: Colors.blue),
+            ),
+            SizedBox(width: 40.w),
+            IconButton(
+              onPressed: () {
+                // Xử lý xóa lịch tập cho ngày nào đó
+                _deleteAllExercises(context); // Ví dụ xóa cho ngày đầu tiên
+              },
+              icon: Icon(Icons.delete, color: Colors.blue),
             ),
           ],
         ),
@@ -165,11 +216,17 @@ class EditScheduleScreen extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color:
+                      Theme.of(context).brightness == Brightness.light
+                          ? Colors.white
+                          : Colors.grey[850],
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade200,
+                      color:
+                          Theme.of(context).brightness == Brightness.light
+                              ? Colors.grey.withOpacity(0.2)
+                              : Colors.black.withOpacity(0.2),
                       blurRadius: 4,
                       offset: Offset(0, 2),
                     ),

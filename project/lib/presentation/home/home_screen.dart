@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
-
+import '../../core/notification.dart';
+import '../../data/repositories/auth_repository.dart';
 import '../../providers/authentic_provider.dart';
 import '../../providers/schedule_provider.dart';
 import '../../routes/app_routes.dart';
 import '../../firebase_service.dart';
 import 'editScheduleScreen.dart';
-import '../../widgets/appBar_widget.dart'; // Đã sửa import nếu cần
-// ✅ Import thêm nếu chưa có
+import '../../widgets/appBar_widget.dart';
 
 class HomeScreen extends StatefulWidget {
+  final AuthRepository authRepo;
+
+  HomeScreen({required this.authRepo});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -27,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _firebaseService = FirebaseService();
     _productsFuture = _firebaseService.getProducts();
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
 
   Future<void> _handleLogout(
@@ -44,20 +49,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
     switch (index) {
       case 0:
-        // Ở Home rồi
         break;
       case 1:
+        Navigator.pushNamed(context, AppRoutes.exercise);
         break;
       case 2:
+        Navigator.pushNamed(context, AppRoutes.workout);
         break;
       case 3:
+        Navigator.pushNamed(context, AppRoutes.journey);
         break;
       case 4:
         Navigator.pushNamed(context, AppRoutes.community);
         break;
       case 5:
         Navigator.pushNamed(context, AppRoutes.profile);
-        break;
     }
   }
 
@@ -77,6 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
+          shadowColor: Colors.white,
+          // backgroundColor: Colors.white,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          elevation: 0,
           automaticallyImplyLeading: false,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,16 +118,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (value == "2") {
                     _handleLogout(context, authProvider);
                   } else if (value == "1") {
-                    Navigator.pushNamed(
-                      context,
-                      AppRoutes.profile,
-                      arguments: authProvider.authRepo,
-                    );
                   }
                 },
                 itemBuilder:
                     (context) => const [
-                      PopupMenuItem(value: "1", child: Text("Trang cá nhân")),
+                      PopupMenuItem(value: "1", child: Text("test thông báo")),
                       PopupMenuItem(value: "2", child: Text("Đăng xuất")),
                     ],
               ),
@@ -126,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: SingleChildScrollView(
           child: Container(
-            color: const Color.fromARGB(255, 245, 245, 245),
+            // color: const Color.fromARGB(255, 245, 245, 245),
             child: SafeArea(
               child: Column(
                 children: [
@@ -205,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                             SizedBox(height: 5.h),
-                            Consumer<WorkoutProvider>(
+                            Consumer<ScheduleProvider>(
                               builder: (context, workoutProvider, _) {
                                 return Table(
                                   border: TableBorder.symmetric(
@@ -308,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 4.h),
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 4.h),
+            padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 2.h),
             decoration: BoxDecoration(
               color:
                   _isToday
@@ -319,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Text(
               day,
               style: TextStyle(
-                color: isWeekend ? Colors.red : Colors.black,
+                color: isWeekend ? Colors.red : (Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white),
                 fontWeight: FontWeight.bold,
                 fontSize: 13.sp,
               ),
@@ -328,20 +333,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 4.h),
+          padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 4.w),
           child:
               exercises.isNotEmpty
                   ? Container(
                     padding: EdgeInsets.symmetric(
                       vertical: 5.h,
-                      horizontal: 4.w,
+                      horizontal: 10.w,
                     ),
                     decoration: BoxDecoration(
                       color: _isToday ? Colors.blue : Colors.blue[50],
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Wrap(
-                      spacing: 5.w,
+                      spacing: 10.w,
                       children:
                           exercises.map((e) {
                             return Text(

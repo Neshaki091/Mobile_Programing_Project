@@ -1,47 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../../providers/community_provider.dart';
-import '../../data/models/message.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../data/models/user_model.dart';
+import '../../data/repositories/community_repository.dart';
 import '../../routes/app_routes.dart';
+import '../../data/repositories/auth_repository.dart';
+import '../../widgets/appBar_widget.dart';
 
-class Community extends StatefulWidget {
-  final User user;
-
-  Community(this.user);
-
+class CommunityScreen extends StatefulWidget {
   @override
-  _CommunityState createState() => _CommunityState();
+  State<CommunityScreen> createState() => _CommunityScreenState();
 }
 
-class _CommunityState extends State<Community> {
-  final TextEditingController _controller = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  late String userId;
-  late ChatService _chatService;
-  int currentIndex = 0;
-
+class _CommunityScreenState extends State<CommunityScreen> {
+  final AuthRepository _authRepository = AuthRepository(); // <-- Tạo bên trong
+  late final String currentUserId;
+  final CommunityRepository _communityRepo = CommunityRepository();
+  List<UserProfile> _allUsers = [];
+  List<UserProfile> _filteredUsers = [];
+  final TextEditingController _searchController = TextEditingController();
+  int currentIndex = 4;
   @override
   void initState() {
     super.initState();
-    _chatService = ChatService();
-    userId = widget.user.uid;
+    currentUserId = _authRepository.currentUser?.uid ?? '';
+    _loadUsers();
+    _searchController.addListener(_onSearchChanged);
   }
 
-  void _sendMessage() {
-    if (_controller.text.trim().isNotEmpty) {
-      _chatService.sendMessage(_controller.text.trim(), userId);
-      _controller.clear();
-
-      // Delay để đảm bảo StreamBuilder đã cập nhật
-      Future.delayed(Duration(milliseconds: 300), () {
-        _scrollController.animateTo(
-          0,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      });
-    }
+  void _loadUsers() async {
+    final users = await _communityRepo.getAllUsers();
+    setState(() {
+      _allUsers = users.where((u) => u.uid != currentUserId).toList();
+      _filteredUsers = _allUsers;
+    });
   }
 
   void onTap(int index) {
@@ -52,146 +42,99 @@ class _CommunityState extends State<Community> {
         Navigator.pushNamed(context, AppRoutes.home);
         break;
       case 1:
+        Navigator.pushNamed(context, AppRoutes.exercise);
+        break;
       case 2:
+        Navigator.pushNamed(context, AppRoutes.workout);
+        break;
       case 3:
-        // Các route khác bạn có thể xử lý ở đây
+        Navigator.pushNamed(context, AppRoutes.journey);
         break;
       case 4:
-        // Đã ở Community, không làm gì cả
         break;
+      case 5:
+        Navigator.pushNamed(context, AppRoutes.profile);
     }
+  }
+
+  void _onSearchChanged() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredUsers =
+          _allUsers
+              .where((user) => user.name.toLowerCase().contains(query))
+              .toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(width: 50.w),
-            Text(
-              "Cộng đồng Chat",
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            IconButton(
-              icon: Icon(Icons.exit_to_app),
-              onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.home);
-              },
-            ),
-          ],
-        ),
-      ),
+      appBar: AppBar(title: const Text('Cộng đồng')),
       body: Column(
         children: [
-          Expanded(
-            child: StreamBuilder<List<Message>>(
-              stream: _chatService.getMessages(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text("Chưa có tin nhắn nào"));
-                }
-
-                final messages = snapshot.data!;
-
-                return ListView.builder(
-                  controller: _scrollController,
-                  reverse: true,
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final message = messages[index];
-                    final isMe = message.userId == userId;
-
-                    return Align(
-                      alignment:
-                          isMe ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                          vertical: 4.h,
-                        ),
-                        padding: EdgeInsets.all(10.w),
-                        decoration: BoxDecoration(
-                          color: isMe ? Colors.blueAccent : Colors.grey[300],
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CircleAvatar(
-                                  backgroundImage:
-                                      message.avatarUrl.isNotEmpty
-                                          ? NetworkImage(message.avatarUrl)
-                                          : null,
-                                  child:
-                                      message.avatarUrl.isEmpty
-                                          ? Icon(Icons.person)
-                                          : null,
-                                  radius: 15.r,
-                                ),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  message.name,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: isMe ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 4.h),
-                            Text(
-                              message.text,
-                              style: TextStyle(
-                                color: isMe ? Colors.white : Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Tìm kiếm người dùng...',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ),
-          Divider(height: 1),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    onSubmitted: (_) => _sendMessage(),
-                    decoration: InputDecoration(
-                      hintText: 'Nhập tin nhắn...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
+          Expanded(
+            child:
+                _filteredUsers.isEmpty
+                    ? const Center(child: Text('Không tìm thấy người dùng'))
+                    : ListView.builder(
+                      itemCount: _filteredUsers.length,
+                      itemBuilder: (context, index) {
+                        final user = _filteredUsers[index];
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage:
+                                user.avatarUrl.isNotEmpty
+                                    ? NetworkImage(user.avatarUrl)
+                                    : null,
+                            child:
+                                user.avatarUrl.isEmpty
+                                    ? Icon(Icons.person)
+                                    : null,
+                          ),
+                          title: Text(user.name),
+                          subtitle: Text(user.email),
+                          trailing: IconButton(
+                            icon: Icon(Icons.chat),
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.chat,
+                                arguments: {
+                                  'currentUser': _authRepository.currentUser,
+                                  'friend': user,
+                                },
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                IconButton(icon: Icon(Icons.send), onPressed: _sendMessage),
-              ],
-            ),
           ),
         ],
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: currentIndex,
+        onTap: onTap,
       ),
     );
   }

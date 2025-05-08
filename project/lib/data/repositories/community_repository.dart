@@ -1,15 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/message.dart';
+import '../models/user_model.dart'; // Đảm bảo có model này
 import '../repositories/auth_repository.dart';
 
 class CommunityRepository {
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
   final DatabaseReference _messagesRef = FirebaseDatabase.instance.ref(
     'messages',
   );
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final DatabaseReference _usersRef = FirebaseDatabase.instance.ref('users');
   final AuthRepository _authRepo = AuthRepository();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   /// Gửi tin nhắn mới
   Future<void> sendMessage(String text, String userId) async {
@@ -17,13 +21,9 @@ class CommunityRepository {
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final newMessageRef = _messagesRef.push();
 
-      // Lấy thông tin người dùng
-      final userProfile = await _authRepo.getUserProfile(
-        userId,
-      ); // Đảm bảo lấy thông tin người dùng đúng cách
+      final userProfile = await _authRepo.getUserProfile(userId);
       final currentUser = _auth.currentUser;
 
-      // Tạo tin nhắn
       final message = {
         'text': text.trim(),
         'userId': userId,
@@ -32,10 +32,21 @@ class CommunityRepository {
         'avatarUrl': currentUser?.photoURL ?? userProfile?.avatarUrl ?? '',
       };
 
-      // Lưu tin nhắn vào Firebase
       await newMessageRef.set(message);
     } catch (e) {
       print("Lỗi khi gửi tin nhắn: $e");
+    }
+  }
+
+  Future<List<UserProfile>> getAllUsers() async {
+    try {
+      final snapshot = await _firestore.collection('users').get();
+      return snapshot.docs
+          .map((doc) => UserProfile.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print('Error fetching users: $e');
+      return [];
     }
   }
 
@@ -43,8 +54,8 @@ class CommunityRepository {
   Stream<List<Message>> getMessages() {
     return _messagesRef.orderByChild('timestamp').onValue.map((event) {
       final messages = <Message>[];
-
       final data = event.snapshot.value;
+
       if (data != null && data is Map) {
         final rawMap = Map<String, dynamic>.from(data);
         rawMap.forEach((key, value) {
@@ -57,11 +68,35 @@ class CommunityRepository {
           }
         });
 
-        // Sắp xếp từ mới nhất đến cũ nhất
         messages.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       }
 
       return messages;
     });
+  }
+
+  /// Tìm kiếm người dùng theo tên (hoặc email, v.v.)
+  Future<List<UserProfile>> searchUsersByName(String query) async {
+    final snapshot = await _usersRef.once();
+    final List<UserProfile> results = [];
+
+    if (snapshot.snapshot.exists && snapshot.snapshot.value is Map) {
+      final usersMap = Map<String, dynamic>.from(
+        snapshot.snapshot.value as Map,
+      );
+      usersMap.forEach((key, value) {
+        try {
+          final userData = Map<String, dynamic>.from(value);
+          final user = UserProfile.fromMap(userData);
+          if (user.name.toLowerCase().contains(query.toLowerCase())) {
+            results.add(user);
+          }
+        } catch (e) {
+          print("Lỗi khi đọc người dùng: $e");
+        }
+      });
+    }
+
+    return results;
   }
 }

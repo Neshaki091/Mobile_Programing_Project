@@ -3,15 +3,17 @@ class Message {
   final String userId;
   final int timestamp;
   final String name;
-  final String avatarUrl; // Thêm trường imageUrl nếu cần thiết
+  final String avatarUrl;
+
   Message({
     required this.text,
     required this.userId,
     required this.timestamp,
-    this.name = '',
-    required this.avatarUrl, // Khởi tạo trường name với giá trị mặc định
+    this.name = '', // Mặc định giá trị name là rỗng
+    this.avatarUrl = '', // Mặc định giá trị avatarUrl là rỗng nếu không có
   });
 
+  // Factory constructor để tạo Message từ dữ liệu từ database
   factory Message.fromDatabase(Map<String, dynamic> data) {
     print("Message từ DB: $data");
     return Message(
@@ -19,7 +21,19 @@ class Message {
       userId: data['userId'] ?? '',
       timestamp: data['timestamp'] ?? 0,
       name: data['name'] ?? 'N/A',
-      avatarUrl: data['avatarUrl'], // Lấy giá trị từ trường name trong dữ liệu
+      avatarUrl:
+          data['avatarUrl'] ?? '', // Đảm bảo avatarUrl có giá trị mặc định
     );
+  }
+
+  // Chuyển đối tượng Message thành Map để lưu vào database
+  Map<String, dynamic> toMap() {
+    return {
+      'text': text,
+      'userId': userId,
+      'timestamp': timestamp,
+      'name': name,
+      'avatarUrl': avatarUrl,
+    };
   }
 }

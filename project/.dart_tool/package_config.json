@@ -14,6 +14,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "awesome_notifications",
+      "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/awesome_notifications-0.10.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "boolean_selector",
       "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/boolean_selector-2.1.2",
       "packageUri": "lib/",
@@ -134,6 +140,24 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "firebase_messaging",
+      "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging-15.2.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_messaging_platform_interface",
+      "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_platform_interface-4.6.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_messaging_web",
+      "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_web-3.10.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "flutter",
       "rootUri": "file:///C:/flutter/packages/flutter",
       "packageUri": "lib/",
@@ -162,6 +186,12 @@
       "rootUri": "file:///C:/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.7"
+    },
+    {
+      "name": "flutter_timezone",
+      "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_timezone-4.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
     },
     {
       "name": "flutter_web_plugins",
@@ -222,6 +252,12 @@
       "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/http_parser-4.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "intl",
+      "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.20.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
     },
     {
       "name": "leak_tracker",
@@ -434,7 +470,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-05-05T12:18:04.744341Z",
+  "generated": "2025-05-08T05:12:48.345259Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///C:/flutter",

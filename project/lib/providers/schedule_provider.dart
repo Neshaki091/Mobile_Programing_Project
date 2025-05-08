@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../core/notification.dart';
 import '../data/models/workoutSchedule.dart';
 
-class WorkoutProvider with ChangeNotifier {
+class ScheduleProvider with ChangeNotifier {
   final List<WorkoutSchedule> _schedule = [
     WorkoutSchedule(day: 'MON', exercises: []),
     WorkoutSchedule(day: 'TUE', exercises: []),
@@ -15,39 +17,110 @@ class WorkoutProvider with ChangeNotifier {
     WorkoutSchedule(day: 'SUN', exercises: []),
   ];
 
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final NotificationService _notificationService;
+
+  ScheduleProvider() : _notificationService = NotificationService();
+
   List<WorkoutSchedule> get schedule => List.unmodifiable(_schedule);
+
+  Future<void> initialize() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await loadFromFirestore(user.uid);
+    } else {
+      await loadFromLocal();
+    }
+
+    // Đảm bảo lịch thông báo sẽ được lên lại khi khởi tạo
+    await _scheduleNotificationWithContent();
+  }
+
+  Future<void> _scheduleNotificationWithContent() async {
+    final prefs = await SharedPreferences.getInstance();
+    final morningHour = prefs.getInt('morningHour') ?? 7;
+    final morningMinute = prefs.getInt('morningMinute') ?? 0;
+    final afternoonHour = prefs.getInt('afternoonHour') ?? 14;
+    final afternoonMinute = prefs.getInt('afternoonMinute') ?? 0;
+
+    // Hủy tất cả thông báo cũ trước khi lên lịch thông báo mới
+    await _notificationService.cancelAllNotifications();
+
+    // Lên lịch thông báo cho lịch tập mỗi ngày
+    await _notificationService.scheduleNotificationAtTime(
+      morningHour,
+      morningMinute,
+      100,
+      'Lịch tập buổi sáng',
+      await _buildTodayWorkoutContent(),
+    );
+
+    await _notificationService.scheduleNotificationAtTime(
+      afternoonHour,
+      afternoonMinute,
+      101,
+      'Lịch tập buổi chiều',
+      await _buildTodayWorkoutContent(),
+    );
+  }
+
+  Future<String> _buildTodayWorkoutContent() async {
+    final now = DateTime.now();
+    final today =
+        ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'][now.weekday - 1];
+    final todaySchedule = _schedule.firstWhere((s) => s.day == today);
+    if (todaySchedule.exercises.isEmpty) {
+      return 'Hôm nay bạn không có bài tập nào.';
+    }
+    final vietnameseDay = _getVietnameseDayName(today);
+    final exerciseList = todaySchedule.exercises.join(', ');
+    return '($vietnameseDay): $exerciseList';
+  }
+
+  String _getVietnameseDayName(String day) {
+    switch (day) {
+      case 'MON':
+        return 'Thứ Hai';
+      case 'TUE':
+        return 'Thứ Ba';
+      case 'WED':
+        return 'Thứ Tư';
+      case 'THU':
+        return 'Thứ Năm';
+      case 'FRI':
+        return 'Thứ Sáu';
+      case 'SAT':
+        return 'Thứ Bảy';
+      case 'SUN':
+        return 'Chủ Nhật';
+      default:
+        return day;
+    }
+  }
 
   void updateExercises(String day, List<String> newExercises) {
     final index = _schedule.indexWhere((s) => s.day == day);
     if (index != -1) {
       _schedule[index].exercises = newExercises;
       notifyListeners();
+      _scheduleNotificationWithContent();
     }
   }
 
-  /// 🔴 Save to Firestore
   Future<void> saveToFirestore(String uid) async {
     try {
       final data = {for (var item in _schedule) item.day: item.exercises};
-      await FirebaseFirestore.instance
-          .collection('workout_schedules')
-          .doc(uid)
-          .set(data);
+      await _firestore.collection('workout_schedules').doc(uid).set(data);
     } catch (e) {
       debugPrint('Error saving to Firestore: $e');
     }
   }
 
-  /// 🟢 Load from Firestore
   Future<void> loadFromFirestore(String uid) async {
     try {
-      
       final doc =
-          await FirebaseFirestore.instance
-              .collection('workout_schedules')
-              .doc(uid)
-              .get();
-
+          await _firestore.collection('workout_schedules').doc(uid).get();
       if (doc.exists) {
         final data = doc.data() as Map<String, dynamic>;
         for (var item in _schedule) {
@@ -62,7 +135,6 @@ class WorkoutProvider with ChangeNotifier {
     }
   }
 
-  /// 💾 Save to SharedPreferences (Local)
   Future<void> saveToLocal() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -73,7 +145,6 @@ class WorkoutProvider with ChangeNotifier {
     }
   }
 
-  /// 📥 Load from SharedPreferences (Local)
   Future<void> loadFromLocal() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -93,10 +164,9 @@ class WorkoutProvider with ChangeNotifier {
   }
 
   void clearSchedule() {
-  for (var item in _schedule) {
-    item.exercises.clear();
+    for (var item in _schedule) {
+      item.exercises.clear();
+    }
+    notifyListeners();
   }
-  notifyListeners();
-}
-
 }
