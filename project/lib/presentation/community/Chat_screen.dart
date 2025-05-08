@@ -136,7 +136,7 @@ class _ChatScreenState extends State<ChatScreen> {
       };
 
       final response = await http.post(
-        Uri.parse('$serverUrl/send-notification'),
+        Uri.parse('$serverUrl/send-message-notification'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(bodyData),
       );

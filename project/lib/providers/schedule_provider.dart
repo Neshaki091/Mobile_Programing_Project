@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/notification.dart';
 import '../data/models/workoutSchedule.dart';
 
@@ -33,21 +33,17 @@ class ScheduleProvider with ChangeNotifier {
       await loadFromLocal();
     }
 
-    // Đảm bảo lịch thông báo sẽ được lên lại khi khởi tạo
     await _scheduleNotificationWithContent();
   }
 
   Future<void> _scheduleNotificationWithContent() async {
-    final prefs = await SharedPreferences.getInstance();
-    final morningHour = prefs.getInt('morningHour') ?? 7;
-    final morningMinute = prefs.getInt('morningMinute') ?? 0;
-    final afternoonHour = prefs.getInt('afternoonHour') ?? 14;
-    final afternoonMinute = prefs.getInt('afternoonMinute') ?? 0;
+    final morningHour = 7;
+    final morningMinute = 0;
+    final afternoonHour = 14;
+    final afternoonMinute = 0;
 
-    // Hủy tất cả thông báo cũ trước khi lên lịch thông báo mới
     await _notificationService.cancelAllNotifications();
 
-    // Lên lịch thông báo cho lịch tập mỗi ngày
     await _notificationService.scheduleNotificationAtTime(
       morningHour,
       morningMinute,

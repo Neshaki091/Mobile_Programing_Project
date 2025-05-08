@@ -3,7 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:project/providers/theme_provider.dart';
 import 'package:project/providers/schedule_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AppSettingsScreen extends StatefulWidget {
   @override
@@ -156,17 +157,68 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
   }
 
   Future<void> _saveNotificationTime(String key, int value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(key, value);
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('notification_schedule')
+            .doc('schedule')
+            .set(
+              {key: value},
+              SetOptions(merge: true),
+            ); // merge true để không ghi đè các trường khác
+      } catch (e) {
+        debugPrint('Error saving notification time to Firestore: $e');
+      }
+    }
   }
 
   Future<Map<String, int>> _getNotificationTimes() async {
-    final prefs = await SharedPreferences.getInstance();
-    return {
-      'morningHour': prefs.getInt('morningHour') ?? 7,
-      'morningMinute': prefs.getInt('morningMinute') ?? 0,
-      'afternoonHour': prefs.getInt('afternoonHour') ?? 14,
-      'afternoonMinute': prefs.getInt('afternoonMinute') ?? 0,
-    };
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final docSnapshot =
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.uid)
+                .collection('notification_schedule')
+                .doc('schedule')
+                .get();
+
+        if (docSnapshot.exists) {
+          final data = docSnapshot.data()!;
+          return {
+            'morningHour': data['morningHour'] ?? 7,
+            'morningMinute': data['morningMinute'] ?? 0,
+            'afternoonHour': data['afternoonHour'] ?? 14,
+            'afternoonMinute': data['afternoonMinute'] ?? 0,
+          };
+        } else {
+          return {
+            'morningHour': 7,
+            'morningMinute': 0,
+            'afternoonHour': 14,
+            'afternoonMinute': 0,
+          };
+        }
+      } catch (e) {
+        debugPrint('Error fetching notification times from Firestore: $e');
+        return {
+          'morningHour': 7,
+          'morningMinute': 0,
+          'afternoonHour': 14,
+          'afternoonMinute': 0,
+        };
+      }
+    } else {
+      return {
+        'morningHour': 7,
+        'morningMinute': 0,
+        'afternoonHour': 14,
+        'afternoonMinute': 0,
+      };
+    }
   }
 }
