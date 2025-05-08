@@ -65,7 +65,7 @@ def schedule_ngrok_update():
         update_ngrok_url()
 
 # ====== API gửi thông báo ======
-@app.route('/send-notification', methods=['POST'])
+@app.route('/send-message-notification', methods=['POST'])
 def send_notification():
     try:
         data = request.get_json()
