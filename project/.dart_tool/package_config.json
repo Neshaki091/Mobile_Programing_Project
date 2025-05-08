@@ -164,10 +164,40 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "flutter_background_service",
+      "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_background_service-5.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_background_service_android",
+      "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_background_service_android-6.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_background_service_ios",
+      "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_background_service_ios-5.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_background_service_platform_interface",
+      "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_background_service_platform_interface-5.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "flutter_lints",
       "rootUri": "file:///C:/Users/huynh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-5.0.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
+    },
+    {
+      "name": "flutter_localizations",
+      "rootUri": "file:///C:/flutter/packages/flutter_localizations",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
     },
     {
       "name": "flutter_screenutil",
@@ -470,7 +500,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-05-08T05:12:48.345259Z",
+  "generated": "2025-05-08T08:38:37.298703Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///C:/flutter",
