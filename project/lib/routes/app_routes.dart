@@ -14,7 +14,6 @@ import '../presentation/home/editScheduleScreen.dart';
 import '../presentation/splashScreen.dart';
 import '../presentation/community/community.dart';
 import '../presentation/community/chat_screen.dart';
-import '../data/models/nutrition_model.dart';
 import '../data/models/user_model.dart';
 import '../presentation/exercises/exercise_detail_screen.dart';
 import '../presentation/journey/journey_screen.dart';

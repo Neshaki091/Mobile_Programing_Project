@@ -19,7 +19,6 @@ class WorkoutDetailScreen extends StatefulWidget {
 }
 
 class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
-  int _currentExerciseIndex = 0;
   bool _workoutCompleted = false;
   bool _workoutInProgress = false;
   
