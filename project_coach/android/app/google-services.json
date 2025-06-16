@@ -1,0 +1,151 @@
+{
+  "project_info": {
+    "project_number": "914004163536",
+    "firebase_url": "https://mobile-programing-projec-289a5-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "mobile-programing-projec-289a5",
+    "storage_bucket": "mobile-programing-projec-289a5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914004163536:android:3dec31fd71cbbb6187d7d5",
+        "android_client_info": {
+          "package_name": "com.example.fitness_nutritions_projects"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "914004163536-30cfipj5s26juj4tk8lq0p1ga1soabsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC40FRKgsxms8d2ZFTmLzhuhFpjRm8b8ic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914004163536-30cfipj5s26juj4tk8lq0p1ga1soabsg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "914004163536-b4jt1r2odlc8lir9qe2sdsrhn9qk6v8o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fitnessNutritionsProjects"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914004163536:android:a3aec8e06d1c3f9a87d7d5",
+        "android_client_info": {
+          "package_name": "com.example.project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "914004163536-29cdiqdvcfmje2276mf49d9frd53mna6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.project",
+            "certificate_hash": "d0c6197e2a3f4700f65b101a0f6d23f6b5c31d4a"
+          }
+        },
+        {
+          "client_id": "914004163536-43hhmnibnu67rcalen225l94hjon21tl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.project",
+            "certificate_hash": "66303dcd52966a97862d996dd50dcfa7a210b16d"
+          }
+        },
+        {
+          "client_id": "914004163536-j995o3824hpjssjge8vdpp4u38juuim4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.project",
+            "certificate_hash": "61e3cec834810c8c437308474fcd2bf18f5857c7"
+          }
+        },
+        {
+          "client_id": "914004163536-30cfipj5s26juj4tk8lq0p1ga1soabsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC40FRKgsxms8d2ZFTmLzhuhFpjRm8b8ic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914004163536-30cfipj5s26juj4tk8lq0p1ga1soabsg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "914004163536-b4jt1r2odlc8lir9qe2sdsrhn9qk6v8o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fitnessNutritionsProjects"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914004163536:android:3bfb7ca3c1708fcd87d7d5",
+        "android_client_info": {
+          "package_name": "com.example.project_coach"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "914004163536-ru2pranjpgbg4ovqhfjf0dbm6euo9d47.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.project_coach",
+            "certificate_hash": "66303dcd52966a97862d996dd50dcfa7a210b16d"
+          }
+        },
+        {
+          "client_id": "914004163536-30cfipj5s26juj4tk8lq0p1ga1soabsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC40FRKgsxms8d2ZFTmLzhuhFpjRm8b8ic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914004163536-30cfipj5s26juj4tk8lq0p1ga1soabsg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "914004163536-b4jt1r2odlc8lir9qe2sdsrhn9qk6v8o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fitnessNutritionsProjects"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
