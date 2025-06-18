@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-
+import 'viewmodels/learner_viewmodel.dart';
 import 'viewmodels/workout_viewmodel.dart';
 import 'viewmodels/nutrition_viewmodel.dart';
 import 'viewmodels/auth_viewmodel.dart';
@@ -18,6 +18,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
         ChangeNotifierProvider(create: (_) => WorkoutViewModel()),
         ChangeNotifierProvider(create: (_) => NutritionViewModel()),
+        ChangeNotifierProvider(create: (_) => LearnerViewModel()),
       ],
       child: const MyApp(),
     ),

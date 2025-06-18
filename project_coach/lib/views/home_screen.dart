@@ -4,11 +4,16 @@ import '../viewmodels/nutrition_viewmodel.dart';
 import '../viewmodels/workout_viewmodel.dart';
 import '../models/workout_model.dart';
 import '../models/nutrition_model.dart';
+import '../models/user_model.dart';
 import 'widget/addNutrition.dart';
 import 'widget/addWorkout.dart';
+import 'learner_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final UserProfile currentUser;
+
+  const HomeScreen({super.key, required this.currentUser});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -24,13 +29,9 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    // Gọi API từ ViewModel
     Future.microtask(() {
       Provider.of<WorkoutViewModel>(context, listen: false).fetchWorkouts();
-      Provider.of<NutritionViewModel>(
-        context,
-        listen: false,
-      ).fetchNutritionData();
+      Provider.of<NutritionViewModel>(context, listen: false).fetchNutritionData();
     });
   }
 
@@ -59,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen>
           workout.name,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-
         trailing: Chip(
           label: Text(workout.level),
           backgroundColor: _getLevelColor(workout.level),
@@ -121,10 +121,10 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          SafeArea(
-            child: Padding(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
                 vertical: 10,
@@ -136,63 +136,61 @@ class _HomeScreenState extends State<HomeScreen>
                 ],
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TabBar(
-                controller: _tabController,
-                onTap: (_) => setState(() {}),
-                indicator: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.black,
-                tabs: const [
-                  Tab(text: 'Bài tập luyện'),
-                  Tab(text: 'Dinh dưỡng'),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Tìm kiếm',
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.grey[200],
-                border: OutlineInputBorder(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+                ),
+                child: TabBar(
+                  controller: _tabController,
+                  onTap: (_) => setState(() {}),
+                  indicator: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  labelColor: Colors.white,
+                  unselectedLabelColor: Colors.black,
+                  tabs: const [
+                    Tab(text: 'Bài tập luyện'),
+                    Tab(text: 'Dinh dưỡng'),
+                  ],
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Expanded(child: _buildTabContent()),
-        ],
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Tìm kiếm',
+                  prefixIcon: const Icon(Icons.search),
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Expanded(child: _buildTabContent()),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.pink,
         child: const Icon(Icons.add),
         onPressed: () {
           if (_tabController.index == 0) {
-            // Thêm bài tập
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const AddWorkoutScreen()),
             );
           } else {
-            // Thêm dinh dưỡng
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const AddNutritionScreen()),
@@ -200,16 +198,26 @@ class _HomeScreenState extends State<HomeScreen>
           }
         },
       ),
-
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Learner'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
+      // Bạn có thể bật lại nếu cần:
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: _selectedIndex,
+      //   onTap: (index) {
+      //     setState(() => _selectedIndex = index);
+      //     if (index == 1) {
+      //       Navigator.push(context, MaterialPageRoute(builder: (_) => const LearnerScreen()));
+      //     } else if (index == 2) {
+      //       Navigator.push(
+      //         context,
+      //         MaterialPageRoute(builder: (_) => ProfileScreen(user: widget.currentUser)),
+      //       );
+      //     }
+      //   },
+      //   items: const [
+      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Learner'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+      //   ],
+      // ),
     );
   }
 }

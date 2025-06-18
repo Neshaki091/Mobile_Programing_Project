@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../viewmodels/auth_viewmodel.dart';
-import 'home_screen.dart';
 import 'login_screen.dart';
+import 'main_screen.dart'; // ✅ Thêm dòng này
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -30,7 +30,6 @@ class _SplashScreenState extends State<SplashScreen>
 
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
 
-    /// Gọi sau khi frame đầu tiên vẽ xong
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initialize();
     });
@@ -44,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen>
       if (authVM.isLoggedIn) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => HomeScreen()),
+          MaterialPageRoute(builder: (_) => MainScreen(currentUser: authVM.userProfile!)), // ✅ Sửa tại đây
         );
       } else {
         Navigator.pushReplacement(

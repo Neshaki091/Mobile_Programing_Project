@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (success) {
       final uid = authViewModel.firebaseUser?.uid;
       if (uid != null) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen())); // TODO: Thay HomeScreen bằng màn hình chính của bạn
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(currentUser: authViewModel.userProfile!))); // TODO: Thay HomeScreen bằng màn hình chính của bạn
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Không lấy được UID người dùng!")),

@@ -2,43 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
 
 class LearnerService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final CollectionReference _userCollection = FirebaseFirestore.instance.collection('users');
 
-  /// Lấy toàn bộ học viên từ Firestore
-  Future<List<UserProfile>> getAllLearners() async {
+  Future<List<UserProfile>> fetchAllUsers() async {
     try {
-      final snapshot =
-          await _firestore
-              .collection('users')
-              .where('role', isEqualTo: 'learner')
-              .get();
-
-      return snapshot.docs
+      final querySnapshot = await _userCollection.get();
+      return querySnapshot.docs
           .map((doc) => UserProfile.fromFirestore(doc))
           .toList();
     } catch (e) {
-      print('Lỗi khi lấy danh sách học viên: $e');
-      return [];
-    }
-  }
-
-  /// Tìm kiếm học viên theo tên
-  Future<List<UserProfile>> searchLearnersByName(String query) async {
-    try {
-      final snapshot =
-          await _firestore
-              .collection('users')
-              .where('role', isEqualTo: 'learner')
-              .get();
-
-      return snapshot.docs
-          .map((doc) => UserProfile.fromFirestore(doc))
-          .where(
-            (user) => user.name.toLowerCase().contains(query.toLowerCase()),
-          )
-          .toList();
-    } catch (e) {
-      print('Lỗi khi tìm kiếm học viên: $e');
+      print("Error fetching users: $e");
       return [];
     }
   }

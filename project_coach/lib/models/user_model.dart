@@ -30,14 +30,13 @@ class UserProfile {
     required this.favorites,
     required this.myWorkouts,
     required this.friends,
-    this.fcmToken, // Thêm constructor param
+    this.fcmToken,
     this.morningHour = 7,
     this.morningMinute = 0,
     this.afternoonHour = 14,
     this.afternoonMinute = 0,
   });
 
-  // Tạo UserProfile từ Map
   factory UserProfile.fromMap(Map<String, dynamic> map) {
     return UserProfile(
       uid: map['uid'],
@@ -59,7 +58,6 @@ class UserProfile {
     );
   }
 
-  // Tạo UserProfile từ Firestore DocumentSnapshot
   factory UserProfile.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return UserProfile(
@@ -82,7 +80,6 @@ class UserProfile {
     );
   }
 
-  // Chuyển UserProfile thành Map để lưu vào Firestore
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
@@ -103,5 +100,43 @@ class UserProfile {
       'afternoonMinute': afternoonMinute,
     };
   }
+
+  // 🔄 Phương thức copyWith để tạo bản sao với các giá trị mới
+  UserProfile copyWith({
+    String? uid,
+    String? email,
+    String? name,
+    double? height,
+    double? weight,
+    String? avatarUrl,
+    int? age,
+    bool? isMale,
+    List<String>? friends,
+    List<String>? favorites,
+    List<String>? myWorkouts,
+    String? fcmToken,
+    int? morningHour,
+    int? morningMinute,
+    int? afternoonHour,
+    int? afternoonMinute,
+  }) {
+    return UserProfile(
+      uid: uid ?? this.uid,
+      email: email ?? this.email,
+      name: name ?? this.name,
+      height: height ?? this.height,
+      weight: weight ?? this.weight,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      age: age ?? this.age,
+      isMale: isMale ?? this.isMale,
+      friends: friends ?? this.friends,
+      favorites: favorites ?? this.favorites,
+      myWorkouts: myWorkouts ?? this.myWorkouts,
+      fcmToken: fcmToken ?? this.fcmToken,
+      morningHour: morningHour ?? this.morningHour,
+      morningMinute: morningMinute ?? this.morningMinute,
+      afternoonHour: afternoonHour ?? this.afternoonHour,
+      afternoonMinute: afternoonMinute ?? this.afternoonMinute,
+    );
+  }
 }
-  
